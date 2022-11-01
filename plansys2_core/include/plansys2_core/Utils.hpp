@@ -49,23 +49,32 @@ std::string substr_without_empty_lines(
 std::string remove_comments(const std::string & pddl);
 
 
-struct PlanNode {
-    plansys2_msgs::msg::PlanItem item;
-    std::shared_ptr<PlanNode> true_node;
-    std::shared_ptr<PlanNode> false_node;
+struct PlanNode
+{
+  plansys2_msgs::msg::PlanItem item;
+  std::shared_ptr<PlanNode> true_node;
+  std::shared_ptr<PlanNode> false_node;
 };
 
-plansys2_msgs::msg::Plan encode_plan(const std::shared_ptr<PlanNode>& root);
-std::shared_ptr<PlanNode> decode_plan(const plansys2_msgs::msg::Plan &plan);
-namespace internal {
-  void encode_plan(const std::shared_ptr<PlanNode> &root, std::vector<int> &struc,
-                   std::vector<plansys2_msgs::msg::PlanItem> &data);
+plansys2_msgs::msg::Plan encode_plan(const std::shared_ptr<PlanNode> & root);
+std::shared_ptr<PlanNode> decode_plan(const plansys2_msgs::msg::Plan & plan);
+namespace internal
+{
+void encode_plan(
+  const std::shared_ptr<PlanNode> & root, std::vector<int> & struc,
+  std::vector<plansys2_msgs::msg::PlanItem> & data);
 
-  std::shared_ptr<PlanNode> decode_plan(std::vector<int> &struc, std::vector<plansys2_msgs::msg::PlanItem> &data);
+std::shared_ptr<PlanNode> decode_plan(
+  std::vector<int> & struc,
+  std::vector<plansys2_msgs::msg::PlanItem> & data);
 
-  std::shared_ptr<PlanNode> decode_plan(std::vector<int> &struc, std::vector<plansys2_msgs::msg::PlanItem> &data);
+std::shared_ptr<PlanNode> decode_plan(
+  std::vector<int> & struc,
+  std::vector<plansys2_msgs::msg::PlanItem> & data);
 
-  std::shared_ptr<PlanNode> decode_plan(std::queue<int> &struc, std::queue<plansys2_msgs::msg::PlanItem> &data);
+std::shared_ptr<PlanNode> decode_plan(
+  std::queue<int> & struc,
+  std::queue<plansys2_msgs::msg::PlanItem> & data);
 }
 
 }  // namespace plansys2

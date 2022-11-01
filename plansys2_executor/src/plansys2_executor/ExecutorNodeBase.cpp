@@ -285,7 +285,8 @@ ExecutorNodeBase::get_feedback_info(
 
   for (const auto & action : *action_map) {
     if (!action.second.action_executor) {
-      RCLCPP_WARN(get_logger(), "Action executor does not exist for %s. Skipping", action.first.c_str());
+      RCLCPP_WARN(
+        get_logger(), "Action executor does not exist for %s. Skipping", action.first.c_str());
       continue;
     }
 
@@ -369,11 +370,14 @@ ExecutorNodeBase::print_execution_info(
   }
 }
 
-  rclcpp_action::GoalResponse
-  ExecutorNodeBase::handle_goal(const rclcpp_action::GoalUUID &uuid, std::shared_ptr<const ExecutePlan::Goal> goal) {
-    return rclcpp_action::GoalResponse::REJECT;
-  }
+rclcpp_action::GoalResponse
+ExecutorNodeBase::handle_goal(
+  const rclcpp_action::GoalUUID & uuid,
+  std::shared_ptr<const ExecutePlan::Goal> goal)
+{
+  return rclcpp_action::GoalResponse::REJECT;
+}
 
-  void ExecutorNodeBase::execute(const std::shared_ptr<GoalHandleExecutePlan> goal_handle) {}
+void ExecutorNodeBase::execute(const std::shared_ptr<GoalHandleExecutePlan> goal_handle) {}
 
 }  // namespace plansys2

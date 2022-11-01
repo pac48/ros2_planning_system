@@ -130,7 +130,7 @@ DomainExpertNode::on_configure(const rclcpp_lifecycle::State & state)
       std::istreambuf_iterator<char>());
     domain_expert_->extendDomain(domain_str);
 
-  // TODO PDDL syntax should be checked by domain or planner plugin, not default planner
+    // TODO PDDL syntax should be checked by domain or planner plugin, not default planner
 
 //    bool check_valid = planner->is_valid_domain(domain_expert_->getDomain(), get_namespace());
 //

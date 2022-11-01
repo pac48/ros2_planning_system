@@ -32,8 +32,8 @@
 
 namespace plansys2
 {
-  using PredicateSet = std::unordered_set<plansys2::Predicate, PredicateHashFunction>;
-  using ConditionPair = std::pair<parser::pddl::Condition*, parser::pddl::Condition*>;
+using PredicateSet = std::unordered_set<plansys2::Predicate, PredicateHashFunction>;
+using ConditionPair = std::pair<parser::pddl::Condition *, parser::pddl::Condition *>;
 
 class ProblemExpert : public ProblemExpertInterface
 {
@@ -78,7 +78,7 @@ public:
   bool isValidPredicate(const plansys2::Predicate & predicate);
   bool isValidFunction(const plansys2::Function & function);
   bool isValidGoal(const plansys2::Goal & goal);
-  bool isValidCondition(const plansys2_msgs::msg::Tree &cond);
+  bool isValidCondition(const plansys2_msgs::msg::Tree & cond);
 
 private:
   bool checkPredicateTreeTypes(

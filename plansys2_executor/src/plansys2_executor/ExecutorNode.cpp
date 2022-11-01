@@ -21,7 +21,8 @@ namespace plansys2
 using ExecutePlan = plansys2_msgs::action::ExecutePlan;
 using namespace std::chrono_literals;
 
-ExecutorNode::ExecutorNode() : ExecutorNodeBase()
+ExecutorNode::ExecutorNode()
+: ExecutorNodeBase()
 {
   using namespace std::placeholders;
 
@@ -76,14 +77,14 @@ ExecutorNode::getOrderedSubGoals()
 
   for (const auto & plan_item : current_plan_.value().items) {
     std::shared_ptr<plansys2_msgs::msg::DurativeAction> durative_action =
-    domain_client_->getDurativeAction(
-    get_action_name(plan_item.action), get_action_params(plan_item.action));
-    if (durative_action){
+      domain_client_->getDurativeAction(
+      get_action_name(plan_item.action), get_action_params(plan_item.action));
+    if (durative_action) {
       apply(durative_action->at_start_effects, local_predicates, local_functions);
       apply(durative_action->at_end_effects, local_predicates, local_functions);
-    } else{
+    } else {
       std::shared_ptr<plansys2_msgs::msg::Action> action = domain_client_->getAction(
-      get_action_name(plan_item.action), get_action_params(plan_item.action));
+        get_action_name(plan_item.action), get_action_params(plan_item.action));
       apply(action->effects, local_predicates, local_functions);
     }
 
@@ -144,32 +145,39 @@ ExecutorNode::execute(const std::shared_ptr<GoalHandleExecutePlan> goal_handle)
   for (const auto & plan_item : current_plan_.value().items) {
     auto index = BTBuilder::to_action_id(plan_item, 3);
 
-    auto durative_action_info = domain_client_->getDurativeAction(get_action_name(plan_item.action), get_action_params(plan_item.action));
-    if (durative_action_info){
+    auto durative_action_info = domain_client_->getDurativeAction(
+      get_action_name(
+        plan_item.action), get_action_params(plan_item.action));
+    if (durative_action_info) {
       (*action_map)[index] = ActionExecutionInfo();
       (*action_map)[index].action_executor =
-          ActionExecutor::make_shared(plan_item.action, shared_from_this());
+        ActionExecutor::make_shared(plan_item.action, shared_from_this());
       (*action_map)[index].durative_action_info = durative_action_info;
       (*action_map)[index].duration = plan_item.duration;
       std::string action_name = (*action_map)[index].durative_action_info->name;
       if (std::find(
           action_timeout_actions.begin(), action_timeout_actions.end(),
           action_name) != action_timeout_actions.end() &&
-          this->has_parameter("action_timeouts." + action_name + ".duration_overrun_percentage"))
+        this->has_parameter("action_timeouts." + action_name + ".duration_overrun_percentage"))
       {
         (*action_map)[index].duration_overrun_percentage = this->get_parameter(
-            "action_timeouts." + action_name + ".duration_overrun_percentage").as_double();
+          "action_timeouts." + action_name + ".duration_overrun_percentage").as_double();
       }
       RCLCPP_INFO(
-          get_logger(), "Action %s timeout percentage %f", action_name.c_str(),
-          (*action_map)[index].duration_overrun_percentage);
+        get_logger(), "Action %s timeout percentage %f", action_name.c_str(),
+        (*action_map)[index].duration_overrun_percentage);
     }
 
-    auto action_info = domain_client_->getAction(get_action_name(plan_item.action), get_action_params(plan_item.action));
+    auto action_info = domain_client_->getAction(
+      get_action_name(
+        plan_item.action), get_action_params(plan_item.action));
     if (action_info) { // TODO support both action types??
       (*action_map)[index] = ActionExecutionInfo();
-      (*action_map)[index].action_executor = ActionExecutor::make_shared(plan_item.action, shared_from_this());
-      (*action_map)[index].durative_action_info = std::make_shared<plansys2_msgs::msg::DurativeAction>();
+      (*action_map)[index].action_executor = ActionExecutor::make_shared(
+        plan_item.action,
+        shared_from_this());
+      (*action_map)[index].durative_action_info =
+        std::make_shared<plansys2_msgs::msg::DurativeAction>();
       (*action_map)[index].durative_action_info->name = action_info->name;
       (*action_map)[index].durative_action_info->parameters = action_info->parameters;
       (*action_map)[index].durative_action_info->observe = action_info->observe;
@@ -180,14 +188,14 @@ ExecutorNode::execute(const std::shared_ptr<GoalHandleExecutePlan> goal_handle)
       if (std::find(
           action_timeout_actions.begin(), action_timeout_actions.end(),
           action_name) != action_timeout_actions.end() &&
-          this->has_parameter("action_timeouts." + action_name + ".duration_overrun_percentage"))
+        this->has_parameter("action_timeouts." + action_name + ".duration_overrun_percentage"))
       {
         (*action_map)[index].duration_overrun_percentage = this->get_parameter(
-            "action_timeouts." + action_name + ".duration_overrun_percentage").as_double();
+          "action_timeouts." + action_name + ".duration_overrun_percentage").as_double();
       }
       RCLCPP_INFO(
-          get_logger(), "Action %s timeout percentage %f", action_name.c_str(),
-          (*action_map)[index].duration_overrun_percentage);
+        get_logger(), "Action %s timeout percentage %f", action_name.c_str(),
+        (*action_map)[index].duration_overrun_percentage);
     }
 
   }

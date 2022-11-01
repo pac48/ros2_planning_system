@@ -60,23 +60,26 @@
 
 #include "ExecutorNodeBase.hpp"
 
-namespace plansys2 {
+namespace plansys2
+{
 
-  class ExecutorNodeContingent : public ExecutorNodeBase {
-  public:
-    using ExecutePlan = plansys2_msgs::action::ExecutePlan;
-    using GoalHandleExecutePlan = rclcpp_action::ServerGoalHandle<ExecutePlan>;
+class ExecutorNodeContingent : public ExecutorNodeBase
+{
+public:
+  using ExecutePlan = plansys2_msgs::action::ExecutePlan;
+  using GoalHandleExecutePlan = rclcpp_action::ServerGoalHandle<ExecutePlan>;
 
-    ExecutorNodeContingent();
+  ExecutorNodeContingent();
 
-  protected:
+protected:
+  void execute(const std::shared_ptr<GoalHandleExecutePlan> goal_handle) override;
 
-    void execute(const std::shared_ptr<GoalHandleExecutePlan> goal_handle) override;
+  rclcpp_action::GoalResponse
+  handle_goal(
+    const rclcpp_action::GoalUUID & uuid,
+    std::shared_ptr<const ExecutePlan::Goal> goal) override;
 
-    rclcpp_action::GoalResponse
-    handle_goal(const rclcpp_action::GoalUUID &uuid, std::shared_ptr<const ExecutePlan::Goal> goal) override;
-
-  };
+};
 
 }  // namespace plansys2
 

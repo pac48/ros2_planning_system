@@ -46,8 +46,8 @@ TEST(simple_btbuilder_tests, test_tree_builder) {
   exe.add_node(problem_node->get_node_base_interface());
   bool finish = false;
   std::thread t([&]() {
-    while (!finish) { exe.spin_some(); }
-  });
+      while (!finish) {exe.spin_some();}
+    });
 
   domain_node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   problem_node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
@@ -59,23 +59,25 @@ TEST(simple_btbuilder_tests, test_tree_builder) {
 
   std::ifstream problem_ifs(pkgpath + "/pddl/problem_blocks_observe.pddl");
   std::string problem_str((std::istreambuf_iterator<char>(problem_ifs)),
-                          std::istreambuf_iterator<char>());
+    std::istreambuf_iterator<char>());
   problem_client->addProblem(problem_str);
 
-  pluginlib::ClassLoader<plansys2::PlanSolverBase> plan_loader("plansys2_core", "plansys2::PlanSolverBase");
+  pluginlib::ClassLoader<plansys2::PlanSolverBase> plan_loader("plansys2_core",
+    "plansys2::PlanSolverBase");
   std::optional<plansys2_msgs::msg::Plan> plan;
   auto planner = plan_loader.createUniqueInstance("plansys2/CFFPlanSolver");
   plan = planner->getPlan(domain_client->getDomain(), problem_client->getProblem());
   ASSERT_TRUE(plan);
 
-  pluginlib::ClassLoader<plansys2::BTBuilder> btbuilder_loader("plansys2_executor", "plansys2::BTBuilder");
+  pluginlib::ClassLoader<plansys2::BTBuilder> btbuilder_loader("plansys2_executor",
+    "plansys2::BTBuilder");
   auto btbuilder = btbuilder_loader.createUniqueInstance("plansys2::ContingentBTBuilder");
   btbuilder->initialize();
   auto tree = btbuilder->get_tree(plan.value());
   std::cout << tree << std::endl;
   std::ifstream expected_tree_ifs(pkgpath + "/test_behavior_trees/test_contingent_bt.xml");
   std::string expected_tree((std::istreambuf_iterator<char>(expected_tree_ifs)),
-                            std::istreambuf_iterator<char>());
+    std::istreambuf_iterator<char>());
 
   ASSERT_EQ(expected_tree, tree);
 
@@ -86,7 +88,8 @@ TEST(simple_btbuilder_tests, test_tree_builder) {
 
 //TODO need to add graphviz test
 
-int main(int argc, char **argv) {
+int main(int argc, char ** argv)
+{
   testing::InitGoogleTest(&argc, argv);
   rclcpp::init(argc, argv);
 

@@ -46,21 +46,21 @@ TEST(PDDLParserTestCase, pddl_parser)
   ASSERT_TRUE(domain_ifs.good());
   std::string domain_str((
       std::istreambuf_iterator<char>(domain_ifs)),
-                         std::istreambuf_iterator<char>());
+    std::istreambuf_iterator<char>());
   ASSERT_NE(domain_str, "");
   std::ifstream instance_ifs(instance_file);
   ASSERT_TRUE(instance_ifs.good());
   std::string instance_str((
       std::istreambuf_iterator<char>(instance_ifs)),
-                           std::istreambuf_iterator<char>());
+    std::istreambuf_iterator<char>());
 
   ASSERT_NE(instance_str, "");
   // Read domain and instance
   bool okparse = false;
   bool okprint = false;
   try {
-    parser::pddl::Domain domain( domain_str );
-    parser::pddl::Instance instance( domain, instance_str );
+    parser::pddl::Domain domain(domain_str);
+    parser::pddl::Instance instance(domain, instance_str);
     okparse = true;
     try {
       std::cout << domain << std::endl;

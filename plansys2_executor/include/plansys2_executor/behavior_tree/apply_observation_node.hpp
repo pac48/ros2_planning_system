@@ -31,29 +31,29 @@
 namespace plansys2
 {
 
-  class ApplyObservation : public BT::ActionNodeBase
+class ApplyObservation : public BT::ActionNodeBase
+{
+public:
+  ApplyObservation(
+    const std::string & xml_tag_name,
+    const BT::NodeConfiguration & conf);
+
+  void halt() {}
+  BT::NodeStatus tick() override;
+
+  static BT::PortsList providedPorts()
   {
-  public:
-    ApplyObservation(
-        const std::string & xml_tag_name,
-        const BT::NodeConfiguration & conf);
+    return BT::PortsList(
+      {
+        BT::InputPort<std::string>("value", "Value from observation"),
+        BT::InputPort<std::string>("observe", "Observation predicate"),
+      });
+  }
 
-    void halt() {}
-    BT::NodeStatus tick() override;
-
-    static BT::PortsList providedPorts()
-    {
-      return BT::PortsList(
-          {
-              BT::InputPort<std::string>("value", "Value from observation"),
-              BT::InputPort<std::string>("observe", "Observation predicate"),
-          });
-    }
-
-  private:
-    std::shared_ptr<std::map<std::string, ActionExecutionInfo>> action_map_;
-    std::shared_ptr<plansys2::ProblemExpertClient> problem_client_;
-  };
+private:
+  std::shared_ptr<std::map<std::string, ActionExecutionInfo>> action_map_;
+  std::shared_ptr<plansys2::ProblemExpertClient> problem_client_;
+};
 
 }  // namespace plansys2
 

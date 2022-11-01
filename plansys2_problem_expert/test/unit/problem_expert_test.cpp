@@ -313,8 +313,8 @@ TEST(problem_expert, addget_unknown_predicates) {
   std::string pkgpath = ament_index_cpp::get_package_share_directory("plansys2_problem_expert");
   std::ifstream domain_ifs(pkgpath + "/pddl/domain_simple.pddl");
   std::string domain_str((
-                             std::istreambuf_iterator<char>(domain_ifs)),
-                         std::istreambuf_iterator<char>());
+      std::istreambuf_iterator<char>(domain_ifs)),
+    std::istreambuf_iterator<char>());
 
   auto domain_expert = std::make_shared<plansys2::DomainExpert>(domain_str);
   plansys2::ProblemExpert problem_expert(domain_expert);
@@ -339,7 +339,8 @@ TEST(problem_expert, addget_unknown_predicates) {
   predicate_3.parameters.push_back(parser::pddl::fromStringParam("bedroom", "room"));
 
   auto unknown_1 = parser::pddl::fromString("(unknown (robot_at r2d2 kitchen))");
-  auto oneof_1 = parser::pddl::fromString("(oneof (person_at paco kitchen) (person_at paco bedroom))");
+  auto oneof_1 = parser::pddl::fromString(
+    "(oneof (person_at paco kitchen) (person_at paco bedroom))");
   auto or_1 = parser::pddl::fromString("(or (person_at paco kitchen) (person_at paco bedroom))");
 
 
@@ -601,8 +602,8 @@ TEST(problem_expert, get_problem_observe) {
   std::string pkgpath = ament_index_cpp::get_package_share_directory("plansys2_problem_expert");
   std::ifstream domain_ifs(pkgpath + "/pddl/domain_blocks_observe.pddl");
   std::string domain_str((
-                             std::istreambuf_iterator<char>(domain_ifs)),
-                         std::istreambuf_iterator<char>());
+      std::istreambuf_iterator<char>(domain_ifs)),
+    std::istreambuf_iterator<char>());
 
   auto domain_expert = std::make_shared<plansys2::DomainExpert>(domain_str);
   plansys2::ProblemExpert problem_expert(domain_expert);
@@ -660,10 +661,16 @@ TEST(problem_expert, get_problem_observe) {
   ASSERT_TRUE(problem_expert.setGoal(goal));
 
 
-  auto tmp = std::string("( define ( problem problem_1 )\n( :domain blocksworld )\n( :objects\n\tb1 b2 b3 ") +
-    std::string("- block\n)\n( :init\n\t( ontable b1 )\n\t( clear b1 )\n\t( ontable b3 )\n\t( unknown ( ontable ") +
-    std::string("b2 )\t)\n\t( unknown ( on b2 b3 )\t)\n\t( oneof\n\t\t( ontable b2 )\n\t\t( on b2 b3 )\n\t)\n\t( or") +
-    std::string("\n\t\t( on b2 b3 )\n\t\t( on b3 b2 )\n\t)\n\t( or\n\t\t( not ( clear b1 ) )\n\t\t( clear b1 )\n\t)\n)\n( :goal\n\t( and\n\t\t( on b1 b2 )\n\t)\n)\n)\n");
+  auto tmp = std::string(
+    "( define ( problem problem_1 )\n( :domain blocksworld )\n( :objects\n\tb1 b2 b3 ") +
+    std::string(
+    "- block\n)\n( :init\n\t( ontable b1 )\n\t( clear b1 )\n\t( ontable b3 )\n\t( unknown ( ontable ")
+    +
+    std::string(
+    "b2 )\t)\n\t( unknown ( on b2 b3 )\t)\n\t( oneof\n\t\t( ontable b2 )\n\t\t( on b2 b3 )\n\t)\n\t( or")
+    +
+    std::string(
+    "\n\t\t( on b2 b3 )\n\t\t( on b3 b2 )\n\t)\n\t( or\n\t\t( not ( clear b1 ) )\n\t\t( clear b1 )\n\t)\n)\n( :goal\n\t( and\n\t\t( on b1 b2 )\n\t)\n)\n)\n");
   auto problem_str = problem_expert.getProblem();
   std::cout << problem_str;
   ASSERT_EQ(problem_str, tmp);
@@ -849,16 +856,16 @@ TEST(problem_expert, add_problem_observe) {
   std::string pkgpath = ament_index_cpp::get_package_share_directory("plansys2_problem_expert");
   std::ifstream domain_ifs(pkgpath + "/pddl/domain_blocks_observe.pddl");
   std::string domain_str((
-                             std::istreambuf_iterator<char>(domain_ifs)),
-                         std::istreambuf_iterator<char>());
+      std::istreambuf_iterator<char>(domain_ifs)),
+    std::istreambuf_iterator<char>());
 
   auto domain_expert = std::make_shared<plansys2::DomainExpert>(domain_str);
   plansys2::ProblemExpert problem_expert(domain_expert);
 
   std::ifstream problem_1_ifs(pkgpath + "/pddl/problem_blocks_observe.pddl");
   std::string problem_1_str((
-                                std::istreambuf_iterator<char>(problem_1_ifs)),
-                            std::istreambuf_iterator<char>());
+      std::istreambuf_iterator<char>(problem_1_ifs)),
+    std::istreambuf_iterator<char>());
   ASSERT_TRUE(problem_expert.addProblem(problem_1_str));
 
   ASSERT_TRUE(problem_expert.isValidType("block"));
@@ -873,35 +880,47 @@ TEST(problem_expert, add_problem_observe) {
   ASSERT_TRUE(problem_expert.existInstance("b3"));
 
   ASSERT_TRUE(
-      problem_expert.existPredicate(
-          parser::pddl::fromStringPredicate(
-              "(ontable b1)")));
+    problem_expert.existPredicate(
+      parser::pddl::fromStringPredicate(
+        "(ontable b1)")));
   ASSERT_TRUE(
-      problem_expert.existPredicate(
-          parser::pddl::fromStringPredicate(
-              "(clear b1)")));
+    problem_expert.existPredicate(
+      parser::pddl::fromStringPredicate(
+        "(clear b1)")));
 
   ASSERT_EQ(parser::pddl::toString(problem_expert.getGoal()), "(and (on b2 b1)(on b3 b2))");
 
   auto tmp1 = problem_expert.getProblem();
   std::cout << tmp1;
-  auto tmp2 =  std::string("( define ( problem problem_1 )\n( :domain blocksworld )\n( :objects\n\tb1 b2 b3 - block\n)") +
-  std::string("\n( :init\n\t( ontable b1 )\n\t( clear b1 )\n\t( unknown ( ontable b3 )\t)\n\t( unknown ( clear b3 )") +
-  std::string("\t)\n\t( unknown ( on b3 b2 )\t)\n\t( unknown ( ontable b2 )\t)\n\t( unknown ( clear b2 )\t)\n\t( ") +
-  std::string("unknown ( on b2 b3 )\t)\n\t( or\n\t\t( not ( on b3 b2 ) )\n\t\t( not ( on b2 b3 ) )\n\t)\n\t( ") +
-  std::string("or\n\t\t( not ( on b2 b3 ) )\n\t\t( not ( on b3 b2 ) )\n\t)\n\t( oneof\n\t\t( clear b3 )") +
-  std::string("\n\t\t( clear b2 )\n\t)\n\t( oneof\n\t\t( ontable b3 )\n\t\t( ontable b2 )\n\t)\n\t( oneof") +
-  std::string("\n\t\t( ontable b3 )\n\t\t( on b3 b2 )\n\t)\n\t( oneof\n\t\t( ontable b2 )\n\t\t( on b2 b3 ") +
-  std::string(")\n\t)\n\t( oneof\n\t\t( clear b3 )\n\t\t( on b2 b3 )\n\t)\n\t( oneof\n\t\t( clear b2 )\n") +
-  std::string("\t\t( on b3 b2 )\n\t)\n)\n( :goal\n\t( and\n\t\t( on b2 b1 )\n\t\t( on b3 b2 )\n\t)\n)\n)\n");
+  auto tmp2 = std::string(
+    "( define ( problem problem_1 )\n( :domain blocksworld )\n( :objects\n\tb1 b2 b3 - block\n)") +
+    std::string(
+    "\n( :init\n\t( ontable b1 )\n\t( clear b1 )\n\t( unknown ( ontable b3 )\t)\n\t( unknown ( clear b3 )")
+    +
+    std::string(
+    "\t)\n\t( unknown ( on b3 b2 )\t)\n\t( unknown ( ontable b2 )\t)\n\t( unknown ( clear b2 )\t)\n\t( ")
+    +
+    std::string(
+    "unknown ( on b2 b3 )\t)\n\t( or\n\t\t( not ( on b3 b2 ) )\n\t\t( not ( on b2 b3 ) )\n\t)\n\t( ")
+    +
+    std::string(
+    "or\n\t\t( not ( on b2 b3 ) )\n\t\t( not ( on b3 b2 ) )\n\t)\n\t( oneof\n\t\t( clear b3 )") +
+    std::string(
+    "\n\t\t( clear b2 )\n\t)\n\t( oneof\n\t\t( ontable b3 )\n\t\t( ontable b2 )\n\t)\n\t( oneof") +
+    std::string(
+    "\n\t\t( ontable b3 )\n\t\t( on b3 b2 )\n\t)\n\t( oneof\n\t\t( ontable b2 )\n\t\t( on b2 b3 ") +
+    std::string(
+    ")\n\t)\n\t( oneof\n\t\t( clear b3 )\n\t\t( on b2 b3 )\n\t)\n\t( oneof\n\t\t( clear b2 )\n") +
+    std::string(
+    "\t\t( on b3 b2 )\n\t)\n)\n( :goal\n\t( and\n\t\t( on b2 b1 )\n\t\t( on b3 b2 )\n\t)\n)\n)\n");
 
   ASSERT_EQ(tmp1, tmp2);
 
   ASSERT_TRUE(problem_expert.clearKnowledge());
   ASSERT_EQ(
-  problem_expert.getProblem(),
-  std::string("( define ( problem problem_1 )\n( :domain blocksworld )\n") +
-  std::string("( :objects\n)\n( :init\n)\n( :goal\n\t( and\n\t)\n)\n)\n"));
+    problem_expert.getProblem(),
+    std::string("( define ( problem problem_1 )\n( :domain blocksworld )\n") +
+    std::string("( :objects\n)\n( :init\n)\n( :goal\n\t( and\n\t)\n)\n)\n"));
 
 }
 

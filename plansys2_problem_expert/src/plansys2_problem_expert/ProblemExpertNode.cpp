@@ -77,11 +77,11 @@ ProblemExpertNode::ProblemExpertNode()
       std::placeholders::_3));
 
   add_problem_conditional_service_ = create_service<plansys2_msgs::srv::AffectConditional>(
-      "problem_expert/add_problem_conditional",
-      std::bind(
-          &ProblemExpertNode::add_problem_conditional_service_callback,
-          this, std::placeholders::_1, std::placeholders::_2,
-          std::placeholders::_3));
+    "problem_expert/add_problem_conditional",
+    std::bind(
+      &ProblemExpertNode::add_problem_conditional_service_callback,
+      this, std::placeholders::_1, std::placeholders::_2,
+      std::placeholders::_3));
 
   add_problem_function_service_ = create_service<plansys2_msgs::srv::AffectNode>(
     "problem_expert/add_problem_function",
@@ -127,11 +127,11 @@ ProblemExpertNode::ProblemExpertNode()
       std::placeholders::_3));
 
   get_problem_conditionals_service_ = create_service<plansys2_msgs::srv::GetConditionals>(
-      "problem_expert/get_problem_conditionals",
-      std::bind(
-          &ProblemExpertNode::get_problem_conditionals_service_callback,
-          this, std::placeholders::_1, std::placeholders::_2,
-          std::placeholders::_3));
+    "problem_expert/get_problem_conditionals",
+    std::bind(
+      &ProblemExpertNode::get_problem_conditionals_service_callback,
+      this, std::placeholders::_1, std::placeholders::_2,
+      std::placeholders::_3));
 
   get_problem_function_details_service_ =
     create_service<plansys2_msgs::srv::GetNodeDetails>(
@@ -188,11 +188,11 @@ ProblemExpertNode::ProblemExpertNode()
       std::placeholders::_3));
 
   remove_problem_conditional_service_ = create_service<plansys2_msgs::srv::AffectConditional>(
-      "problem_expert/remove_problem_conditional",
-      std::bind(
-          &ProblemExpertNode::remove_problem_conditional_service_callback,
-          this, std::placeholders::_1, std::placeholders::_2,
-          std::placeholders::_3));
+    "problem_expert/remove_problem_conditional",
+    std::bind(
+      &ProblemExpertNode::remove_problem_conditional_service_callback,
+      this, std::placeholders::_1, std::placeholders::_2,
+      std::placeholders::_3));
 
   remove_problem_function_service_ = create_service<plansys2_msgs::srv::AffectNode>(
     "problem_expert/remove_problem_function",
@@ -209,11 +209,11 @@ ProblemExpertNode::ProblemExpertNode()
       std::placeholders::_3));
 
   exist_problem_conditional_service_ = create_service<plansys2_msgs::srv::ExistConditional>(
-      "problem_expert/exist_problem_conditional",
-      std::bind(
-          &ProblemExpertNode::exist_problem_conditional_service_callback,
-          this, std::placeholders::_1, std::placeholders::_2,
-          std::placeholders::_3));
+    "problem_expert/exist_problem_conditional",
+    std::bind(
+      &ProblemExpertNode::exist_problem_conditional_service_callback,
+      this, std::placeholders::_1, std::placeholders::_2,
+      std::placeholders::_3));
 
   exist_problem_function_service_ = create_service<plansys2_msgs::srv::ExistNode>(
     "problem_expert/exist_problem_function",
@@ -424,9 +424,11 @@ ProblemExpertNode::add_problem_predicate_service_callback(
 
 
 void
-ProblemExpertNode::add_problem_conditional_service_callback(const std::shared_ptr<rmw_request_id_t> request_header,
-                                                            const std::shared_ptr<plansys2_msgs::srv::AffectConditional::Request> request,
-                                                            const std::shared_ptr<plansys2_msgs::srv::AffectConditional::Response> response) {
+ProblemExpertNode::add_problem_conditional_service_callback(
+  const std::shared_ptr<rmw_request_id_t> request_header,
+  const std::shared_ptr<plansys2_msgs::srv::AffectConditional::Request> request,
+  const std::shared_ptr<plansys2_msgs::srv::AffectConditional::Response> response)
+{
   if (problem_expert_ == nullptr) {
     response->success = false;
     response->error_info = "Requesting service in non-active state";
@@ -438,7 +440,7 @@ ProblemExpertNode::add_problem_conditional_service_callback(const std::shared_pt
       knowledge_pub_->publish(*get_knowledge_as_msg());
     } else {
       response->error_info =
-          "Condition [" + parser::pddl::toString(request->tree) + "] not valid";
+        "Condition [" + parser::pddl::toString(request->tree) + "] not valid";
     }
   }
 }
@@ -560,9 +562,11 @@ ProblemExpertNode::get_problem_predicates_service_callback(
 }
 
 void
-ProblemExpertNode::get_problem_conditionals_service_callback(const std::shared_ptr<rmw_request_id_t> request_header,
-                                                             const std::shared_ptr<plansys2_msgs::srv::GetConditionals::Request> request,
-                                                             const std::shared_ptr<plansys2_msgs::srv::GetConditionals::Response> response) {
+ProblemExpertNode::get_problem_conditionals_service_callback(
+  const std::shared_ptr<rmw_request_id_t> request_header,
+  const std::shared_ptr<plansys2_msgs::srv::GetConditionals::Request> request,
+  const std::shared_ptr<plansys2_msgs::srv::GetConditionals::Response> response)
+{
   if (problem_expert_ == nullptr) {
     response->success = false;
     response->error_info = "Requesting service in non-active state";
@@ -732,9 +736,11 @@ ProblemExpertNode::remove_problem_predicate_service_callback(
 }
 
 void
-ProblemExpertNode::remove_problem_conditional_service_callback(const std::shared_ptr<rmw_request_id_t> request_header,
-                                                               const std::shared_ptr<plansys2_msgs::srv::AffectConditional::Request> request,
-                                                               const std::shared_ptr<plansys2_msgs::srv::AffectConditional::Response> response) {
+ProblemExpertNode::remove_problem_conditional_service_callback(
+  const std::shared_ptr<rmw_request_id_t> request_header,
+  const std::shared_ptr<plansys2_msgs::srv::AffectConditional::Request> request,
+  const std::shared_ptr<plansys2_msgs::srv::AffectConditional::Response> response)
+{
   if (problem_expert_ == nullptr) {
     response->success = false;
     response->error_info = "Requesting service in non-active state";
@@ -784,17 +790,19 @@ ProblemExpertNode::exist_problem_predicate_service_callback(
   }
 }
 
-  void
-  ProblemExpertNode::exist_problem_conditional_service_callback(const std::shared_ptr<rmw_request_id_t> request_header,
-                                                                const std::shared_ptr<plansys2_msgs::srv::ExistConditional::Request> request,
-                                                                const std::shared_ptr<plansys2_msgs::srv::ExistConditional::Response> response) {
-    if (problem_expert_ == nullptr) {
-      response->exist = false;
-      RCLCPP_WARN(get_logger(), "Requesting service in non-active state");
-    } else {
-      response->exist = problem_expert_->existConditional(request->tree);
-    }
+void
+ProblemExpertNode::exist_problem_conditional_service_callback(
+  const std::shared_ptr<rmw_request_id_t> request_header,
+  const std::shared_ptr<plansys2_msgs::srv::ExistConditional::Request> request,
+  const std::shared_ptr<plansys2_msgs::srv::ExistConditional::Response> response)
+{
+  if (problem_expert_ == nullptr) {
+    response->exist = false;
+    RCLCPP_WARN(get_logger(), "Requesting service in non-active state");
+  } else {
+    response->exist = problem_expert_->existConditional(request->tree);
   }
+}
 
 void
 ProblemExpertNode::exist_problem_function_service_callback(
@@ -856,7 +864,6 @@ ProblemExpertNode::get_knowledge_as_msg() const
 
   return ret_msgs;
 }
-
 
 
 }  // namespace plansys2

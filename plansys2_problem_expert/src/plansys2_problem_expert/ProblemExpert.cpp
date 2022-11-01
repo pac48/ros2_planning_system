@@ -172,84 +172,93 @@ ProblemExpert::getPredicate(const std::string & expr)
   }
 }
 
-  std::vector<plansys2_msgs::msg::Tree>
-  ProblemExpert::getConditionals() {
-    return conditionals_;
-  }
+std::vector<plansys2_msgs::msg::Tree>
+ProblemExpert::getConditionals()
+{
+  return conditionals_;
+}
 
-  bool
-  ProblemExpert::addConditional(const plansys2_msgs::msg::Tree &condition) {
-    if (!existConditional(condition)) {
-      if (isValidCondition(condition)) {
-        if (condition.nodes[0].node_type == plansys2_msgs::msg::Node::ONE_OF && condition.nodes[0].children.size()==1){
-          addPredicate(condition.nodes[1]);
-        } else{
-          conditionals_.push_back(condition);
-        }
-        return true;
+bool
+ProblemExpert::addConditional(const plansys2_msgs::msg::Tree & condition)
+{
+  if (!existConditional(condition)) {
+    if (isValidCondition(condition)) {
+      if (condition.nodes[0].node_type == plansys2_msgs::msg::Node::ONE_OF &&
+        condition.nodes[0].children.size() == 1)
+      {
+        addPredicate(condition.nodes[1]);
       } else {
-        return false;
+        conditionals_.push_back(condition);
       }
-    } else {
       return true;
-    }
-  }
-
-  bool
-  ProblemExpert::removeConditional(const plansys2_msgs::msg::Tree &condition) {
-    if (!isValidCondition(condition)) {  // if predicate is not valid, error
+    } else {
       return false;
     }
-    auto it = std::find_if(conditionals_.begin(), conditionals_.end(), [&condition] (const auto &ele) { return parser::pddl::checkTreeEquality(ele, condition); });
-    if (it != conditionals_.end()){
-      conditionals_.erase(it);
+  } else {
+    return true;
+  }
+}
 
-      // TODO refactor to its own function
-      std::vector<plansys2_msgs::msg::Tree> conditionals_to_remove;
-      std::vector<plansys2_msgs::msg::Tree> conditionals_to_add;
-      if (condition.nodes[0].node_type == plansys2_msgs::msg::Node::UNKNOWN){
-        for (auto c : conditionals_){
-          if (c.nodes[0].node_type == plansys2_msgs::msg::Node::ONE_OF){
-            plansys2_msgs::msg::Tree new_one_of;
-            new_one_of.nodes.push_back(c.nodes[0]);
-            new_one_of.nodes[0].children.clear();
-            int num_children = 0;
-            for (auto child_ind : c.nodes[0].children){
-              if (!parser::pddl::checkNodeEquality(c.nodes[child_ind], condition.nodes[1])){
-                new_one_of.nodes.push_back(c.nodes[child_ind]);
-                new_one_of.nodes[0].children.push_back(num_children+1);
-                num_children++;
-              }
+bool
+ProblemExpert::removeConditional(const plansys2_msgs::msg::Tree & condition)
+{
+  if (!isValidCondition(condition)) {    // if predicate is not valid, error
+    return false;
+  }
+  auto it = std::find_if(
+    conditionals_.begin(), conditionals_.end(), [&condition](const auto & ele) {
+      return parser::pddl::checkTreeEquality(ele, condition);
+    });
+  if (it != conditionals_.end()) {
+    conditionals_.erase(it);
+
+    // TODO refactor to its own function
+    std::vector<plansys2_msgs::msg::Tree> conditionals_to_remove;
+    std::vector<plansys2_msgs::msg::Tree> conditionals_to_add;
+    if (condition.nodes[0].node_type == plansys2_msgs::msg::Node::UNKNOWN) {
+      for (auto c : conditionals_) {
+        if (c.nodes[0].node_type == plansys2_msgs::msg::Node::ONE_OF) {
+          plansys2_msgs::msg::Tree new_one_of;
+          new_one_of.nodes.push_back(c.nodes[0]);
+          new_one_of.nodes[0].children.clear();
+          int num_children = 0;
+          for (auto child_ind : c.nodes[0].children) {
+            if (!parser::pddl::checkNodeEquality(c.nodes[child_ind], condition.nodes[1])) {
+              new_one_of.nodes.push_back(c.nodes[child_ind]);
+              new_one_of.nodes[0].children.push_back(num_children + 1);
+              num_children++;
             }
-            conditionals_to_remove.push_back(c);
-            if (num_children > 0){
-              conditionals_to_add.push_back(new_one_of);
-            }
+          }
+          conditionals_to_remove.push_back(c);
+          if (num_children > 0) {
+            conditionals_to_add.push_back(new_one_of);
           }
         }
       }
-      for (const auto& c : conditionals_to_remove){
-        removeConditional(c);
-      }
-      for (const auto& c : conditionals_to_add){
-        addConditional(c);
-      }
-
-
-
     }
-    return true;
-  }
+    for (const auto & c : conditionals_to_remove) {
+      removeConditional(c);
+    }
+    for (const auto & c : conditionals_to_add) {
+      addConditional(c);
+    }
 
-  bool
-  ProblemExpert::existConditional(const plansys2_msgs::msg::Tree &condition) {
-    return std::find(conditionals_.begin(), conditionals_.end(), condition) != conditionals_.end();
-  }
 
-  std::vector<plansys2::Function>
-  ProblemExpert::getFunctions() {
-    return functions_;
   }
+  return true;
+}
+
+bool
+ProblemExpert::existConditional(const plansys2_msgs::msg::Tree & condition)
+{
+  return std::find(conditionals_.begin(), conditionals_.end(), condition) != conditionals_.end();
+}
+
+std::vector<plansys2::Function>
+ProblemExpert::getFunctions()
+{
+  return functions_;
+}
 
 bool
 ProblemExpert::addFunction(const plansys2::Function & function)
@@ -616,76 +625,80 @@ ProblemExpert::checkPredicateTreeTypes(
   }
 
   switch (tree.nodes[node_id].node_type) {
-  case plansys2_msgs::msg::Node::AND: {
-    bool ret = true;
+    case plansys2_msgs::msg::Node::AND: {
+        bool ret = true;
 
-    for (auto &child_id: tree.nodes[node_id].children) {
-      ret = ret && checkPredicateTreeTypes(tree, domain_expert, child_id);
-    }
-    return ret;
-  }
+        for (auto & child_id: tree.nodes[node_id].children) {
+          ret = ret && checkPredicateTreeTypes(tree, domain_expert, child_id);
+        }
+        return ret;
+      }
 
-  case plansys2_msgs::msg::Node::OR: {
-    bool ret = true;
+    case plansys2_msgs::msg::Node::OR: {
+        bool ret = true;
 
-    for (auto &child_id: tree.nodes[node_id].children) {
-      ret = ret && checkPredicateTreeTypes(tree, domain_expert, child_id);
-    }
-    return ret;
-  }
+        for (auto & child_id: tree.nodes[node_id].children) {
+          ret = ret && checkPredicateTreeTypes(tree, domain_expert, child_id);
+        }
+        return ret;
+      }
 
-  case plansys2_msgs::msg::Node::NOT: {
-    return checkPredicateTreeTypes(tree, domain_expert, tree.nodes[node_id].children[0]);
-  }
+    case plansys2_msgs::msg::Node::NOT: {
+        return checkPredicateTreeTypes(tree, domain_expert, tree.nodes[node_id].children[0]);
+      }
 
-  case plansys2_msgs::msg::Node::UNKNOWN: {
-    return tree.nodes[node_id].children.size()==1 && checkPredicateTreeTypes(tree, domain_expert, tree.nodes[node_id].children[0]);
-  }
+    case plansys2_msgs::msg::Node::UNKNOWN: {
+        return tree.nodes[node_id].children.size() == 1 && checkPredicateTreeTypes(
+          tree,
+          domain_expert,
+          tree.nodes[
+            node_id].children[0]);
+      }
 
-  case plansys2_msgs::msg::Node::ONE_OF: {
-    bool ret = true;
+    case plansys2_msgs::msg::Node::ONE_OF: {
+        bool ret = true;
 
-    for (auto &child_id: tree.nodes[node_id].children) {
-      ret = ret && checkPredicateTreeTypes(tree, domain_expert, child_id);
-    }
-    return ret;
-  }
+        for (auto & child_id: tree.nodes[node_id].children) {
+          ret = ret && checkPredicateTreeTypes(tree, domain_expert, child_id);
+        }
+        return ret;
+      }
 
-  case plansys2_msgs::msg::Node::PREDICATE: {
-    return isValidPredicate(tree.nodes[node_id]);
-  }
+    case plansys2_msgs::msg::Node::PREDICATE: {
+        return isValidPredicate(tree.nodes[node_id]);
+      }
 
-  case plansys2_msgs::msg::Node::FUNCTION: {
-    return isValidFunction(tree.nodes[node_id]);
-  }
+    case plansys2_msgs::msg::Node::FUNCTION: {
+        return isValidFunction(tree.nodes[node_id]);
+      }
 
-  case plansys2_msgs::msg::Node::EXPRESSION: {
-    bool ret = true;
+    case plansys2_msgs::msg::Node::EXPRESSION: {
+        bool ret = true;
 
-    for (auto &child_id: tree.nodes[node_id].children) {
-      ret = ret && checkPredicateTreeTypes(tree, domain_expert, child_id);
-    }
-    return ret;
-  }
+        for (auto & child_id: tree.nodes[node_id].children) {
+          ret = ret && checkPredicateTreeTypes(tree, domain_expert, child_id);
+        }
+        return ret;
+      }
 
-  case plansys2_msgs::msg::Node::FUNCTION_MODIFIER: {
-    bool ret = true;
+    case plansys2_msgs::msg::Node::FUNCTION_MODIFIER: {
+        bool ret = true;
 
-    for (auto &child_id: tree.nodes[node_id].children) {
-      ret = ret && checkPredicateTreeTypes(tree, domain_expert, child_id);
-    }
-    return ret;
-  }
+        for (auto & child_id: tree.nodes[node_id].children) {
+          ret = ret && checkPredicateTreeTypes(tree, domain_expert, child_id);
+        }
+        return ret;
+      }
 
-  case plansys2_msgs::msg::Node::NUMBER: {
-    return true;
-  }
+    case plansys2_msgs::msg::Node::NUMBER: {
+        return true;
+      }
 
-  default:
-    // LCOV_EXCL_START
-    std::cerr << "checkPredicateTreeTypes: Error parsing expresion [" <<
-              parser::pddl::toString(tree, node_id) << "]" << std::endl;
-    // LCOV_EXCL_STOP
+    default:
+      // LCOV_EXCL_START
+      std::cerr << "checkPredicateTreeTypes: Error parsing expresion [" <<
+        parser::pddl::toString(tree, node_id) << "]" << std::endl;
+      // LCOV_EXCL_STOP
   }
 
   return false;
@@ -726,56 +739,60 @@ ProblemExpert::getProblem()
     std::vector<plansys2_msgs::msg::Node> predicates;
     parser::pddl::getPredicates(predicates, cond, 0);
     switch (root_node.node_type) {
-    case plansys2_msgs::msg::Node::UNKNOWN: {
-      auto predicate = predicates[0];
-      StringVec v;
-      for (size_t i = 0; i < predicate.parameters.size(); i++) {
-        v.push_back(predicate.parameters[i].name);
-      }
-      std::transform(predicate.name.begin(), predicate.name.end(), predicate.name.begin(), ::tolower);
-      problem.addInitUnknown(predicate.name, v);
-      break;
-    }
-    case plansys2_msgs::msg::Node::ONE_OF: {
-      std::vector<StringVec> v_vecs;
-      std::vector<std::string> names;
-      for (plansys2_msgs::msg::Node predicate: predicates) {
-        StringVec v;
-        for (size_t i = 0; i < predicate.parameters.size(); i++) {
-          v.push_back(predicate.parameters[i].name);
-        }
-        v_vecs.push_back(v);
-
-        std::transform(
+      case plansys2_msgs::msg::Node::UNKNOWN: {
+          auto predicate = predicates[0];
+          StringVec v;
+          for (size_t i = 0; i < predicate.parameters.size(); i++) {
+            v.push_back(predicate.parameters[i].name);
+          }
+          std::transform(
             predicate.name.begin(), predicate.name.end(),
             predicate.name.begin(), ::tolower);
-        names.push_back(predicate.name);
-      }
-      problem.addInitOneOf(names, v_vecs);
-      break;
-    }
-    case plansys2_msgs::msg::Node::OR: {
-      std::vector<StringVec> vecs;
-      std::vector<std::string> names;
-      std::vector<bool> negates;
-      for (auto predicate: predicates) {
-        StringVec v;
-        for (size_t i = 0; i < predicate.parameters.size(); i++) {
-          v.push_back(predicate.parameters[i].name);
+          problem.addInitUnknown(predicate.name, v);
+          break;
         }
-        std::transform(predicate.name.begin(), predicate.name.end(), predicate.name.begin(), ::tolower);
+      case plansys2_msgs::msg::Node::ONE_OF: {
+          std::vector<StringVec> v_vecs;
+          std::vector<std::string> names;
+          for (plansys2_msgs::msg::Node predicate: predicates) {
+            StringVec v;
+            for (size_t i = 0; i < predicate.parameters.size(); i++) {
+              v.push_back(predicate.parameters[i].name);
+            }
+            v_vecs.push_back(v);
 
-        names.push_back(predicate.name);
-        vecs.push_back(v);
-        negates.push_back(predicate.negate);
-      }
-      problem.addInitOr({names[0], names[1]}, {vecs[0], vecs[1]}, {negates[0], negates[1]});
-      break;
-    }
-    default: {
-      std::cerr << "Failed to add conditional node " << std::endl;
-      break;
-    }
+            std::transform(
+              predicate.name.begin(), predicate.name.end(),
+              predicate.name.begin(), ::tolower);
+            names.push_back(predicate.name);
+          }
+          problem.addInitOneOf(names, v_vecs);
+          break;
+        }
+      case plansys2_msgs::msg::Node::OR: {
+          std::vector<StringVec> vecs;
+          std::vector<std::string> names;
+          std::vector<bool> negates;
+          for (auto predicate: predicates) {
+            StringVec v;
+            for (size_t i = 0; i < predicate.parameters.size(); i++) {
+              v.push_back(predicate.parameters[i].name);
+            }
+            std::transform(
+              predicate.name.begin(), predicate.name.end(),
+              predicate.name.begin(), ::tolower);
+
+            names.push_back(predicate.name);
+            vecs.push_back(v);
+            negates.push_back(predicate.negate);
+          }
+          problem.addInitOr({names[0], names[1]}, {vecs[0], vecs[1]}, {negates[0], negates[1]});
+          break;
+        }
+      default: {
+          std::cerr << "Failed to add conditional node " << std::endl;
+          break;
+        }
     }
 
 
@@ -906,40 +923,45 @@ ProblemExpert::addProblem(const std::string & problem_str)
     plansys2_msgs::msg::Tree tree;
     auto tree_node = cond->getTree(tree, domain);
     switch (tree_node->node_type) {
-    case plansys2_msgs::msg::Node::UNKNOWN: {
-      auto tmp(*tree_node);
-      std::cout << "Adding unknown predicate: " << parser::pddl::toString(tree, tree_node->node_id) << std::endl;
-      if (!addConditional(tree)) {
-        std::cerr << "Failed to add unknown predicate: " << parser::pddl::toString(
+      case plansys2_msgs::msg::Node::UNKNOWN: {
+          auto tmp(*tree_node);
+          std::cout << "Adding unknown predicate: " << parser::pddl::toString(
             tree,
             tree_node->node_id) <<
-                  std::endl;
-      }
-      break;
-    }
-    case plansys2_msgs::msg::Node::ONE_OF: {
-      auto tmp(*tree_node);
-      std::cout << "Adding oneof: " << parser::pddl::toString(tree, tree_node->node_id) << std::endl;
-      if (!addConditional(tree)) {
-        std::cerr << "Failed to add oneof : " << parser::pddl::toString(
-            tree,
-            tree_node->node_id) <<
-                  std::endl;
-      }
-      break;
-    }
-    case plansys2_msgs::msg::Node::OR: {
-      plansys2_msgs::msg::Tree or_tree;
-      auto or_node = cond->getTree(or_tree, domain);
-      std::cout << "Adding or node: " << parser::pddl::toString(or_tree, or_node->node_id) << std::endl;
-      if (!addConditional(tree)) {
-        std::cerr << "Failed to add or : " <<
-                  parser::pddl::toString(or_tree, or_node->node_id) << std::endl;
-      }
-      break;
-    }
-    default:
-      break;
+            std::endl;
+          if (!addConditional(tree)) {
+            std::cerr << "Failed to add unknown predicate: " << parser::pddl::toString(
+              tree,
+              tree_node->node_id) <<
+              std::endl;
+          }
+          break;
+        }
+      case plansys2_msgs::msg::Node::ONE_OF: {
+          auto tmp(*tree_node);
+          std::cout << "Adding oneof: " <<
+            parser::pddl::toString(tree, tree_node->node_id) << std::endl;
+          if (!addConditional(tree)) {
+            std::cerr << "Failed to add oneof : " << parser::pddl::toString(
+              tree,
+              tree_node->node_id) <<
+              std::endl;
+          }
+          break;
+        }
+      case plansys2_msgs::msg::Node::OR: {
+          plansys2_msgs::msg::Tree or_tree;
+          auto or_node = cond->getTree(or_tree, domain);
+          std::cout << "Adding or node: " <<
+            parser::pddl::toString(or_tree, or_node->node_id) << std::endl;
+          if (!addConditional(tree)) {
+            std::cerr << "Failed to add or : " <<
+              parser::pddl::toString(or_tree, or_node->node_id) << std::endl;
+          }
+          break;
+        }
+      default:
+        break;
     }
   }
   plansys2_msgs::msg::Tree goal;

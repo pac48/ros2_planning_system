@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <sstream>
@@ -8,210 +7,230 @@
 #include "plansys2_pddl_parser/TokenStruct.h"
 #include "plansys2_pddl_parser/Type.h"
 
-namespace parser { namespace pddl {
+namespace parser {namespace pddl {
 
 
+    class Domain;
 
-class Domain;
-
-class ExpectedToken : public std::runtime_error {
+    class ExpectedToken: public std::runtime_error {
 public:
-	ExpectedToken(const std::string& token) : std::runtime_error(token + " expected") {}
-};
+      ExpectedToken(const std::string & token) : std::runtime_error(token + " expected") {
+      }
+    };
 
-class UnknownToken : public std::runtime_error {
+    class UnknownToken: public std::runtime_error {
 public:
-	UnknownToken(const std::string& token) : std::runtime_error(token +  " does not name a known token") {}
-};
+      UnknownToken(const std::string & token) : std::runtime_error(
+          token + " does not name a known token") {
+      }
+    };
 
-class UnexpectedEOF : public std::runtime_error {
+    class UnexpectedEOF: public std::runtime_error {
 public:
-	UnexpectedEOF() : std::runtime_error("Unexpected EOF found") {}
-};
+      UnexpectedEOF() : std::runtime_error("Unexpected EOF found") {
+      }
+    };
 
-class Stringreader {
+    class Stringreader {
 
 public:
+      std::vector < std::string > lines;
+      int current_line;        // current line of file
+      std::string s;
+      unsigned r, c;        // current row and column of file
 
-	std::vector<std::string> lines;
-	int current_line;      // current line of file
-	std::string s;
-	unsigned r, c;      // current row and column of file
-  
-	Stringreader( const std::string & domain ) : current_line( 0 ), r( 1 ), c( 0 ) {
-		
-		lines = getLines(domain);
-	
-		s = lines[current_line++];
-		std::transform(s.begin(), s.end(),s.begin(), ::tolower);
-		next();
-	}
+      Stringreader(const std::string & domain) : current_line(0), r(1), c(0) {
 
-	~Stringreader() {
-	}
+        lines = getLines(domain);
 
-	std::vector<std::string> getLines(const std::string & text)
-	{
-  	std::vector<std::string> ret;
-  	size_t start = 0, end = 0;
+        s = lines[current_line++];
+        std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+        next();
+      }
 
-  	while (end != std::string::npos) {
-  	  end = text.find("\n", start);
-  	  ret.push_back(text.substr(start, (end == std::string::npos) ? std::string::npos : end - start));
-  	  start = ((end > (std::string::npos - 1)) ? std::string::npos : end + 1);
-  	}
+      ~Stringreader() {
+      }
 
-  	return ret;
-	}
+      std::vector < std::string > getLines(const std::string & text)
+      {
+        std::vector < std::string > ret;
+        size_t start = 0, end = 0;
 
+        while (end != std::string::npos) {
+          end = text.find("\n", start);
+          ret.push_back(
+            text.substr(
+              start,
+              (end == std::string::npos) ? std::string::npos : end - start));
+          start = ((end > (std::string::npos - 1)) ? std::string::npos : end + 1);
+        }
 
-	// characters to be ignored
-	bool ignore( char c ) {
-		return c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f';
-	}
-
-	// parenthesis
-	bool paren( char c ) {
-		return c == '(' || c == ')' || c == '{' || c == '}';
-	}
-
-	// current character
-	char getChar() {
-		return s[c];
-	}
-
-	// print line and column
-	void printLine() {
-		std::cout << "Line " << r << ", column " << c+1 << ": ";
-	}
-
-	void tokenExit( const std::string & t ) {
-		c -= t.size();
-		printLine();
-		throw UnknownToken(t);
-	}
-
-	// get next non-ignored character
-	void next() {
-		for ( ; c < s.size() && ignore( s[c] ); ++c );
-		while ( c == s.size() || s[c] == ';' ) {
+        return ret;
+      }
 
 
-			++r;
-			c = 0;
+      // characters to be ignored
+      bool ignore(char c)
+      {
+        return c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f';
+      }
 
-			s = lines[current_line++];
-			std::transform(s.begin(), s.end(),s.begin(), ::tolower);
+      // parenthesis
+      bool paren(char c)
+      {
+        return c == '(' || c == ')' || c == '{' || c == '}';
+      }
 
-			for ( ; c < s.size() && ignore( s[c] ); ++c );
-		}
-	}
+      // current character
+      char getChar()
+      {
+        return s[c];
+      }
 
-	// get token converted to lowercase
-	std::string getToken() {
-		std::ostringstream os;
-		while ( c < s.size() && !ignore( s[c] ) && !paren( s[c] ) && s[c] != ',' )
-			os << ( 65 <= s[c] && s[c] <= 90 ? (char)( s[c++] + 32 ) : s[c++] );
-		
-		return os.str();
-	}
+      // print line and column
+      void printLine()
+      {
+        std::cout << "Line " << r << ", column " << c + 1 << ": ";
+      }
 
-	// get token converted to lowercase
-	// check that the token exists
-	template < typename T >
-	std::string getToken( const TokenStruct< T > & ts ) {
-		std::string t = getToken();
-		if ( ts.index( t ) < 0)
-			tokenExit( t );
-		return t;
-	}
+      void tokenExit(const std::string & t)
+      {
+        c -= t.size();
+        printLine();
+        throw UnknownToken(t);
+      }
 
-	// assert syntax
-	void assert_token( const std::string & t ) {
-		unsigned b = 0;
-		for ( unsigned k = 0; c + k < s.size() && k < t.size(); ++k )
-			b += s[c + k] == t[k] || 
-			     ( 65 <= s[c + k] && s[c + k] <= 90 && s[c + k] == t[k] - 32 );
-
-		if ( b < t.size() ) {
-			printLine();
-			throw ExpectedToken(t);
-		}
-		c += t.size();
-		next();
-	}
-
-	// parse the name of a domain or instance
-	std::string parseName( const std::string & u ) {
-		std::string out;
-		std::string t[5] = { "(", "define", "(", u, ")" };
-		for ( unsigned i = 0; i < 5; ++i ) {
-			assert_token( t[i] );
-			if ( i == 3 ) {
-				out = getToken();
-				next();
-			}
-		}
-		return out;
-	}
+      // get next non-ignored character
+      void next()
+      {
+        for ( ; c < s.size() && ignore(s[c]); ++c) {
+        }
+        while (c == s.size() || s[c] == ';') {
 
 
-	// parse a typed list
-	// if check is true, checks that types exist
-	TokenStruct< std::string > parseTypedList( bool check, const TokenStruct< Type * > & ts = TokenStruct< Type * >(), const std::string & lt = "" ) {
-		unsigned k = 0;
-		TokenStruct< std::string > out;
-		for ( next(); getChar() != ')' && lt.find( getChar() ) == std::string::npos; next() ) {
-			if ( getChar() == '-' ) {
-				assert_token( "-" );
+          ++r;
+          c = 0;
 
-				std::string t;
-				// check if the type is "either"
-				if ( getChar() == '(' ) {
-					assert_token( "(" );
-					assert_token( "either" );
+          s = lines[current_line++];
+          std::transform(s.begin(), s.end(), s.begin(), ::tolower);
 
-					t = "( either";
-					for ( ; getChar() != ')'; next() ) {
-						if ( check ) t += " " + getToken( ts );
-						else t += " " + getToken();
-					}
-					t += " )";
-					++c;
-				}
-				else if ( check ) t = getToken( ts );
-				else t = getToken();
+          for ( ; c < s.size() && ignore(s[c]); ++c) {
+          }
+        }
+      }
 
-				out.types.insert( out.types.end(), out.size() - k, t );
-				k = out.size();
-			}
-			else if ( getChar() == '(' ) {
-				assert_token( "(" );
-				assert_token( ":private" );
-				getToken();
-				out.append( parseTypedList( check, ts ) );
-			}
-			else out.insert( getToken() );
-		}
-		if ( k < out.size() ) out.types.insert( out.types.end(), out.size() - k, check ? "object" : "" );
-		++c;
+      // get token converted to lowercase
+      std::string getToken()
+      {
+        std::ostringstream os;
+        while (c < s.size() && !ignore(s[c]) && !paren(s[c]) && s[c] != ',') {
+          os << ( 65 <= s[c] && s[c] <= 90 ? (char)( s[c++] + 32 ) : s[c++] );
+        }
 
-		return out;
-	}
+        return os.str();
+      }
 
-    // check if the expected string is next
-    bool checkNext( const std::string & u ) {
-        if (u.size() + c > s.size()){
-            return false;
+      // get token converted to lowercase
+      // check that the token exists
+      template < typename T >
+      std::string getToken(const TokenStruct < T > & ts)
+      {
+        std::string t = getToken();
+        if (ts.index(t) < 0) {
+          tokenExit(t);
+        }
+        return t;
+      }
+
+      // assert syntax
+      void assert_token(const std::string & t)
+      {
+        unsigned b = 0;
+        for (unsigned k = 0; c + k < s.size() && k < t.size(); ++k) {
+          b += s[c + k] == t[k] ||
+            ( 65 <= s[c + k] && s[c + k] <= 90 && s[c + k] == t[k] - 32 );
+        }
+
+        if (b < t.size() ) {
+          printLine();
+          throw ExpectedToken(t);
+        }
+        c += t.size();
+        next();
+      }
+
+      // parse the name of a domain or instance
+      std::string parseName(const std::string & u)
+      {
+        std::string out;
+        std::string t[5] = {"(", "define", "(", u, ")"};
+        for (unsigned i = 0; i < 5; ++i) {
+          assert_token(t[i]);
+          if (i == 3) {
+            out = getToken();
+            next();
+          }
+        }
+        return out;
+      }
+
+
+      // parse a typed list
+      // if check is true, checks that types exist
+      TokenStruct < std::string > parseTypedList(
+        bool check,
+        const TokenStruct < Type * > & ts = TokenStruct < Type * > (),
+        const std::string & lt = "") {
+        unsigned k = 0;
+        TokenStruct < std::string > out;
+        for (next(); getChar() != ')' && lt.find(getChar() ) == std::string::npos; next() ) {
+          if (getChar() == '-') {
+            assert_token("-");
+
+            std::string t;
+            // check if the type is "either"
+            if (getChar() == '(') {
+              assert_token("(");
+              assert_token("either");
+
+              t = "( either";
+              for ( ; getChar() != ')'; next() ) {
+                if (check) {t += " " + getToken(ts);} else {t += " " + getToken();}
+              }
+              t += " )";
+              ++c;
+            } else if (check) {t = getToken(ts);} else {t = getToken();}
+
+            out.types.insert(out.types.end(), out.size() - k, t);
+            k = out.size();
+          } else if (getChar() == '(') {
+            assert_token("(");
+            assert_token(":private");
+            getToken();
+            out.append(parseTypedList(check, ts) );
+          } else {out.insert(getToken() );}
+        }
+        if (k < out.size() ) {
+          out.types.insert(out.types.end(), out.size() - k, check ? "object" : "");
+        }
+        ++c;
+
+        return out;
+      }
+
+      // check if the expected string is next
+      bool checkNext(const std::string & u)
+      {
+        if (u.size() + c > s.size()) {
+          return false;
         }
         bool all_equal = true;
-        for ( unsigned i = 0; i < u.size(); ++i ) {
-            all_equal &= u[i] == s[c + i];
+        for (unsigned i = 0; i < u.size(); ++i) {
+          all_equal &= u[i] == s[c + i];
         }
         return all_equal;
-    }
+      }
 
-};
+    };
 
-} } // namespaces
-
+  }} // namespaces

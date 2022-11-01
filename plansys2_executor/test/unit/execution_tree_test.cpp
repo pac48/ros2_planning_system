@@ -449,7 +449,6 @@ TEST(executiotest_noden_tree, bt_builder_factory_3)
 }
 
 
-
 TEST(executiotest_noden_tree, bt_builder_factory_contingent)
 {
   auto test_node = rclcpp::Node::make_shared("get_action_from_string");
@@ -464,8 +463,8 @@ TEST(executiotest_noden_tree, bt_builder_factory_contingent)
 
   domain_node->set_parameter({"model_file", pkgpath + "/pddl/domain_blocks_observe.pddl"});
   problem_node->set_parameter({"model_file", pkgpath + "/pddl/domain_blocks_observe.pddl"});
-  std::vector<std::string> planner_plugins ={"CFF"};
-  planner_node->set_parameter({"plan_solver_plugins", planner_plugins });
+  std::vector<std::string> planner_plugins = {"CFF"};
+  planner_node->set_parameter({"plan_solver_plugins", planner_plugins});
   planner_node->declare_parameter("CFF.plugin", "");
   planner_node->set_parameter({"CFF.plugin", "plansys2/CFFPlanSolver"});
 
@@ -477,8 +476,8 @@ TEST(executiotest_noden_tree, bt_builder_factory_contingent)
 
   bool finish = false;
   std::thread t([&]() {
-    while (!finish) {exe.spin_some();}
-  });
+      while (!finish) {exe.spin_some();}
+    });
 
 
   domain_node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
@@ -507,8 +506,8 @@ TEST(executiotest_noden_tree, bt_builder_factory_contingent)
   }
   std::ifstream problem_1_ifs(pkgpath + "/pddl/problem_blocks_observe.pddl");
   std::string problem_1_str((
-                                std::istreambuf_iterator<char>(problem_1_ifs)),
-                            std::istreambuf_iterator<char>());
+      std::istreambuf_iterator<char>(problem_1_ifs)),
+    std::istreambuf_iterator<char>());
   ASSERT_TRUE(problem_client->addProblem(problem_1_str));
 
   ASSERT_EQ(problem_client->getInstances().size(), 3);
@@ -517,13 +516,13 @@ TEST(executiotest_noden_tree, bt_builder_factory_contingent)
   ASSERT_EQ(problem_client->getConditionals().size(), 14);
 
   ASSERT_TRUE(
-      problem_client->existPredicate(
-          parser::pddl::fromStringPredicate(
-              "(ontable b1)")));
+    problem_client->existPredicate(
+      parser::pddl::fromStringPredicate(
+        "(ontable b1)")));
   ASSERT_TRUE(
-      problem_client->existPredicate(
-          parser::pddl::fromStringPredicate(
-              "(clear b1)")));
+    problem_client->existPredicate(
+      parser::pddl::fromStringPredicate(
+        "(clear b1)")));
 
   ASSERT_EQ(parser::pddl::toString(problem_client->getGoal()), "(and (on b2 b1)(on b3 b2))");
 
@@ -532,7 +531,7 @@ TEST(executiotest_noden_tree, bt_builder_factory_contingent)
 
   std::shared_ptr<plansys2::BTBuilder> bt_builder;
   pluginlib::ClassLoader<plansys2::BTBuilder> bt_builder_loader("plansys2_executor",
-                                                                "plansys2::BTBuilder");
+    "plansys2::BTBuilder");
   try {
     bt_builder = bt_builder_loader.createSharedInstance("plansys2::ContingentBTBuilder");
   } catch (pluginlib::PluginlibException & ex) {

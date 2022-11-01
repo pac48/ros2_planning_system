@@ -720,17 +720,17 @@ TEST(problem_expert_node, addget_conditionals)
   plansys2_msgs::msg::Knowledge last_knowledge_msg;
   int knowledge_msg_counter = 0;
   auto knowledge_sub = test_node_2->create_subscription<plansys2_msgs::msg::Knowledge>(
-      "problem_expert/knowledge", rclcpp::QoS(100).transient_local(),
-      [&last_knowledge_msg, &knowledge_msg_counter]
-          (const plansys2_msgs::msg::Knowledge::SharedPtr msg) {
-        last_knowledge_msg = *msg;
-        knowledge_msg_counter++;
-      });
+    "problem_expert/knowledge", rclcpp::QoS(100).transient_local(),
+    [&last_knowledge_msg, &knowledge_msg_counter]
+      (const plansys2_msgs::msg::Knowledge::SharedPtr msg) {
+      last_knowledge_msg = *msg;
+      knowledge_msg_counter++;
+    });
 
   bool finish = false;
   std::thread t([&]() {
-    while (!finish) {exe.spin_some();}
-  });
+      while (!finish) {exe.spin_some();}
+    });
 
   ASSERT_TRUE(problem_client->addInstance(plansys2::Instance("b1", "block")));
   ASSERT_TRUE(problem_client->addInstance(plansys2::Instance("b2", "block")));

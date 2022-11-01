@@ -44,79 +44,80 @@
 #include "pluginlib/class_list_macros.hpp"
 
 
+namespace plansys2
+{
+
+class ExecutorNodeBase : public rclcpp_lifecycle::LifecycleNode
+{
+public:
+  using ExecutePlan = plansys2_msgs::action::ExecutePlan;
+  using GoalHandleExecutePlan = rclcpp_action::ServerGoalHandle<ExecutePlan>;
+  using CallbackReturnT =
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+
+  ExecutorNodeBase();
+
+  void get_plan_service_callback(
+    const std::shared_ptr<rmw_request_id_t> request_header,
+    const std::shared_ptr<plansys2_msgs::srv::GetPlan::Request> request,
+    const std::shared_ptr<plansys2_msgs::srv::GetPlan::Response> response);
 
 
-namespace plansys2 {
+  CallbackReturnT on_configure(const rclcpp_lifecycle::State & state);
 
-  class ExecutorNodeBase : public rclcpp_lifecycle::LifecycleNode {
-  public:
-    using ExecutePlan = plansys2_msgs::action::ExecutePlan;
-    using GoalHandleExecutePlan = rclcpp_action::ServerGoalHandle<ExecutePlan>;
-    using CallbackReturnT =
-        rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+  CallbackReturnT on_activate(const rclcpp_lifecycle::State & state);
 
-    ExecutorNodeBase();
+  CallbackReturnT on_deactivate(const rclcpp_lifecycle::State & state);
 
-    void get_plan_service_callback(const std::shared_ptr<rmw_request_id_t> request_header,
-                                   const std::shared_ptr<plansys2_msgs::srv::GetPlan::Request> request,
-                                   const std::shared_ptr<plansys2_msgs::srv::GetPlan::Response> response);
+  CallbackReturnT on_cleanup(const rclcpp_lifecycle::State & state);
 
+  CallbackReturnT on_shutdown(const rclcpp_lifecycle::State & state);
 
-    CallbackReturnT on_configure(const rclcpp_lifecycle::State &state);
+  CallbackReturnT on_error(const rclcpp_lifecycle::State & state);
 
-    CallbackReturnT on_activate(const rclcpp_lifecycle::State &state);
+protected:
+  rclcpp::Node::SharedPtr node_;
 
-    CallbackReturnT on_deactivate(const rclcpp_lifecycle::State &state);
+  bool cancel_plan_requested_;
+  std::optional<plansys2_msgs::msg::Plan> current_plan_;
 
-    CallbackReturnT on_cleanup(const rclcpp_lifecycle::State &state);
+  std::string action_bt_xml_;
+  std::string start_action_bt_xml_;
+  std::string end_action_bt_xml_;
+  pluginlib::ClassLoader<plansys2::BTBuilder> bt_builder_loader_;
 
-    CallbackReturnT on_shutdown(const rclcpp_lifecycle::State &state);
+  std::shared_ptr<plansys2::DomainExpertClient> domain_client_;
+  std::shared_ptr<plansys2::ProblemExpertClient> problem_client_;
+  std::shared_ptr<plansys2::PlannerClient> planner_client_;
 
-    CallbackReturnT on_error(const rclcpp_lifecycle::State &state);
+  rclcpp_lifecycle::LifecyclePublisher<plansys2_msgs::msg::ActionExecutionInfo>::SharedPtr
+    execution_info_pub_;
+  rclcpp_lifecycle::LifecyclePublisher<plansys2_msgs::msg::Plan>::SharedPtr executing_plan_pub_;
 
-  protected:
-    rclcpp::Node::SharedPtr node_;
+  rclcpp_action::Server<ExecutePlan>::SharedPtr execute_plan_action_server_;
+  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>::SharedPtr dotgraph_pub_;
 
-    bool cancel_plan_requested_;
-    std::optional<plansys2_msgs::msg::Plan> current_plan_;
-
-    std::string action_bt_xml_;
-    std::string start_action_bt_xml_;
-    std::string end_action_bt_xml_;
-    pluginlib::ClassLoader<plansys2::BTBuilder> bt_builder_loader_;
-
-    std::shared_ptr<plansys2::DomainExpertClient> domain_client_;
-    std::shared_ptr<plansys2::ProblemExpertClient> problem_client_;
-    std::shared_ptr<plansys2::PlannerClient> planner_client_;
-
-    rclcpp_lifecycle::LifecyclePublisher<plansys2_msgs::msg::ActionExecutionInfo>::SharedPtr
-        execution_info_pub_;
-    rclcpp_lifecycle::LifecyclePublisher<plansys2_msgs::msg::Plan>::SharedPtr executing_plan_pub_;
-
-    rclcpp_action::Server<ExecutePlan>::SharedPtr execute_plan_action_server_;
-    rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>::SharedPtr dotgraph_pub_;
-
-    rclcpp::Service<plansys2_msgs::srv::GetPlan>::SharedPtr get_plan_service_;
+  rclcpp::Service<plansys2_msgs::srv::GetPlan>::SharedPtr get_plan_service_;
 
 
-    rclcpp_action::CancelResponse handle_cancel(
-        const std::shared_ptr<GoalHandleExecutePlan> goal_handle);
+  rclcpp_action::CancelResponse handle_cancel(
+    const std::shared_ptr<GoalHandleExecutePlan> goal_handle);
 
-    void handle_accepted(const std::shared_ptr<GoalHandleExecutePlan> goal_handle);
+  void handle_accepted(const std::shared_ptr<GoalHandleExecutePlan> goal_handle);
 
-    std::vector<plansys2_msgs::msg::ActionExecutionInfo> get_feedback_info(
-        std::shared_ptr<std::map<std::string, ActionExecutionInfo>> action_map);
+  std::vector<plansys2_msgs::msg::ActionExecutionInfo> get_feedback_info(
+    std::shared_ptr<std::map<std::string, ActionExecutionInfo>> action_map);
 
-    void print_execution_info(
-        std::shared_ptr<std::map<std::string, ActionExecutionInfo>> exec_info);
+  void print_execution_info(
+    std::shared_ptr<std::map<std::string, ActionExecutionInfo>> exec_info);
 
-    virtual void execute(const std::shared_ptr<GoalHandleExecutePlan> goal_handle);
+  virtual void execute(const std::shared_ptr<GoalHandleExecutePlan> goal_handle);
 
-    virtual rclcpp_action::GoalResponse handle_goal(
-        const rclcpp_action::GoalUUID &uuid,
-        std::shared_ptr<const ExecutePlan::Goal> goal);
+  virtual rclcpp_action::GoalResponse handle_goal(
+    const rclcpp_action::GoalUUID & uuid,
+    std::shared_ptr<const ExecutePlan::Goal> goal);
 
-  };
+};
 
 }  // namespace plansys2
 

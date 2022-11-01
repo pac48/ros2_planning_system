@@ -102,7 +102,7 @@ DomainReader::get_joint_domain() const
       constants += domain.constants + "\n";
     }
   }
-  if (!constants.empty()){
+  if (!constants.empty()) {
     ret += "(:constants\n";
     ret += constants;
     ret += ")\n\n";
@@ -130,7 +130,7 @@ DomainReader::get_joint_domain() const
       funcs += domain.functions + "\n";
     }
   }
-  if (!funcs.empty()){
+  if (!funcs.empty()) {
     ret += "(:functions\n";
     ret += funcs;
     ret += ")\n\n";

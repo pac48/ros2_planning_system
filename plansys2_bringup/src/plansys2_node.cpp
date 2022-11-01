@@ -49,7 +49,9 @@ int main(int argc, char ** argv)
   } else if (executor_name == "contingent_executor") {
     executor_node = std::make_shared<plansys2::ExecutorNodeContingent>();
   } else {
-    RCLCPP_ERROR(rclcpp::get_logger("executor_node"), "Unknown executor type %s", executor_name.c_str());
+    RCLCPP_ERROR(
+      rclcpp::get_logger(
+        "executor_node"), "Unknown executor type %s", executor_name.c_str());
     rclcpp::shutdown();
     return -1;
   }

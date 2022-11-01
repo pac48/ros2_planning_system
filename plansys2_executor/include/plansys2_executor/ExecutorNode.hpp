@@ -86,7 +86,9 @@ protected:
   std::optional<std::vector<plansys2_msgs::msg::Tree>> getOrderedSubGoals();
 
   void execute(const std::shared_ptr<GoalHandleExecutePlan> goal_handle) override;
- rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const ExecutePlan::Goal> goal) override;
+  rclcpp_action::GoalResponse handle_goal(
+    const rclcpp_action::GoalUUID & uuid,
+    std::shared_ptr<const ExecutePlan::Goal> goal) override;
 
 };
 

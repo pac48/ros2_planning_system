@@ -271,7 +271,7 @@ ActionExecutor::get_params(const std::string & action_expr)
 void
 ActionExecutor::wait_timeout()
 {
-  if (get_status() ==BT::NodeStatus::RUNNING){
+  if (get_status() == BT::NodeStatus::RUNNING) {
     RCLCPP_WARN(node_->get_logger(), "No action performer for %s. retrying", action_.c_str());
     request_for_performers();
   }

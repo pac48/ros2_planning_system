@@ -98,7 +98,7 @@ private:
   rclcpp::Client<plansys2_msgs::srv::AffectNode>::SharedPtr
     add_problem_predicate_client_;
   rclcpp::Client<plansys2_msgs::srv::AffectConditional>::SharedPtr
-      add_problem_conditional_client_;
+    add_problem_conditional_client_;
   rclcpp::Client<plansys2_msgs::srv::AffectNode>::SharedPtr
     add_problem_function_client_;
   rclcpp::Client<plansys2_msgs::srv::GetProblemGoal>::SharedPtr
@@ -112,7 +112,7 @@ private:
   rclcpp::Client<plansys2_msgs::srv::GetStates>::SharedPtr
     get_problem_predicates_client_;
   rclcpp::Client<plansys2_msgs::srv::GetConditionals>::SharedPtr
-      get_problem_conditionals_client_;
+    get_problem_conditionals_client_;
   rclcpp::Client<plansys2_msgs::srv::GetNodeDetails>::SharedPtr
     get_problem_function_details_client_;
   rclcpp::Client<plansys2_msgs::srv::GetStates>::SharedPtr
@@ -128,13 +128,13 @@ private:
   rclcpp::Client<plansys2_msgs::srv::AffectNode>::SharedPtr
     remove_problem_predicate_client_;
   rclcpp::Client<plansys2_msgs::srv::AffectConditional>::SharedPtr
-      remove_problem_conditional_client_;
+    remove_problem_conditional_client_;
   rclcpp::Client<plansys2_msgs::srv::AffectNode>::SharedPtr
     remove_problem_function_client_;
   rclcpp::Client<plansys2_msgs::srv::ExistNode>::SharedPtr
     exist_problem_predicate_client_;
   rclcpp::Client<plansys2_msgs::srv::ExistConditional>::SharedPtr
-      exist_problem_conditional_client_;
+    exist_problem_conditional_client_;
   rclcpp::Client<plansys2_msgs::srv::ExistNode>::SharedPtr
     exist_problem_function_client_;
   rclcpp::Client<plansys2_msgs::srv::AffectNode>::SharedPtr

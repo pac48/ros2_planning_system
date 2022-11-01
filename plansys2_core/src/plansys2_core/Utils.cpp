@@ -87,62 +87,77 @@ std::string remove_comments(const std::string & pddl)
   }
   return std::string(uncomment.str());
 }
-  plansys2_msgs::msg::Plan encode_plan(const std::shared_ptr<PlanNode>& root){
-    plansys2_msgs::msg::Plan plan;
-    internal::encode_plan(root, plan.structure, plan.items);
-    return plan;
+plansys2_msgs::msg::Plan encode_plan(const std::shared_ptr<PlanNode> & root)
+{
+  plansys2_msgs::msg::Plan plan;
+  internal::encode_plan(root, plan.structure, plan.items);
+  return plan;
+}
+
+std::shared_ptr<PlanNode> decode_plan(const plansys2_msgs::msg::Plan & plan)
+{
+  plansys2_msgs::msg::Plan plan_copy = plan;
+  return internal::decode_plan(plan_copy.structure, plan_copy.items);
+}
+
+namespace internal
+{
+
+void encode_plan(
+  const std::shared_ptr<PlanNode> & root, std::vector<int> & struc,
+  std::vector<plansys2_msgs::msg::PlanItem> & data)
+{
+  if (root == nullptr) {
+    struc.push_back(0);
+    return;
+  }
+  struc.push_back(1);
+  data.push_back(root->item);
+  encode_plan(root->true_node, struc, data);
+  if (root->true_node != root->false_node) {
+    encode_plan(root->false_node, struc, data);
+  } else {
+    encode_plan(nullptr, struc, data);
+  }
+}
+
+std::shared_ptr<PlanNode> decode_plan(
+  std::vector<int> & struc,
+  std::vector<plansys2_msgs::msg::PlanItem> & data)
+{
+  std::queue<int> struc_queue;
+  std::queue<plansys2_msgs::msg::PlanItem> data_queue;
+  for (const auto & e: data) {
+    data_queue.push(e);
   }
 
-  std::shared_ptr<PlanNode> decode_plan(const plansys2_msgs::msg::Plan &plan){
-    plansys2_msgs::msg::Plan plan_copy = plan;
-    return internal::decode_plan(plan_copy .structure, plan_copy .items);
+  for (const auto & e: struc) {
+    struc_queue.push(e);
   }
 
-  namespace internal{
+  return decode_plan(struc_queue, data_queue);
+}
 
-    void encode_plan(const std::shared_ptr<PlanNode>& root, std::vector<int>& struc, std::vector<plansys2_msgs::msg::PlanItem> &data){
-        if(root == nullptr){
-            struc.push_back(0);
-            return;
-        }
-        struc.push_back(1);
-        data.push_back(root->item);
-        encode_plan(root->true_node, struc, data);
-        if (root->true_node != root->false_node){
-          encode_plan(root->false_node, struc, data);
-        } else{
-          encode_plan(nullptr, struc, data);
-        }
-    }
-
-    std::shared_ptr<PlanNode> decode_plan(std::vector<int>& struc, std::vector<plansys2_msgs::msg::PlanItem> &data){
-        std::queue<int> struc_queue;
-        std::queue<plansys2_msgs::msg::PlanItem> data_queue;
-        for (const auto& e: data)
-            data_queue.push(e);
-
-        for (const auto& e: struc)
-            struc_queue.push(e);
-
-        return decode_plan(struc_queue, data_queue);
-    }
-
-    std::shared_ptr<PlanNode> decode_plan(std::queue<int>& struc, std::queue<plansys2_msgs::msg::PlanItem> &data){
-        if(struc.empty())
-            return nullptr;
-        bool b = struc.front();
-        struc.pop();
-        if(b == 1){
-            plansys2_msgs::msg::PlanItem key = data.front();
-            data.pop();
-            auto root = std::make_shared<PlanNode>();
-            root->item = key;
-            root->true_node = decode_plan(struc, data);
-            root->false_node = decode_plan(struc, data);
-            return root;
-        }
-        return nullptr;
-    }
+std::shared_ptr<PlanNode> decode_plan(
+  std::queue<int> & struc,
+  std::queue<plansys2_msgs::msg::PlanItem> & data)
+{
+  if (struc.empty()) {
+    return nullptr;
+  }
+  bool b = struc.front();
+  struc.pop();
+  if (b == 1) {
+    plansys2_msgs::msg::PlanItem key = data.front();
+    data.pop();
+    auto root = std::make_shared<PlanNode>();
+    root->item = key;
+    root->true_node = decode_plan(struc, data);
+    root->false_node = decode_plan(struc, data);
+    return root;
+  }
+  return nullptr;
+}
 }
 
 

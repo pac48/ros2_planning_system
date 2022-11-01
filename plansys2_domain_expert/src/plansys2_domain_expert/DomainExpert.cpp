@@ -223,10 +223,10 @@ DomainExpert::getAction(const std::string & action, const std::vector<std::strin
         action_obj->eff->getTree(ret->effects, *domain_, params);
       }
 
-        // Observe
-        if (action_obj->observe) {
-            action_obj->observe->getTree(ret->observe, *domain_, params);
-        }
+      // Observe
+      if (action_obj->observe) {
+        action_obj->observe->getTree(ret->observe, *domain_, params);
+      }
     }
     i++;
   }
@@ -314,10 +314,10 @@ DomainExpert::getDurativeAction(const std::string & action, const std::vector<st
         action_obj->eff_e->getTree(ret->at_end_effects, *domain_, params);
       }
 
-        // Observe
-        if (action_obj->observe) {
-            action_obj->observe->getTree(ret->observe, *domain_, params);
-        }
+      // Observe
+      if (action_obj->observe) {
+        action_obj->observe->getTree(ret->observe, *domain_, params);
+      }
     }
     i++;
   }

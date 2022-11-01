@@ -54,12 +54,13 @@ public:
 //    return parser::pddl::checkNodeEquality(*this, p);
 //  }
 };
-class PredicateHashFunction {
+class PredicateHashFunction
+{
 public:
   std::hash<std::string> hasher;
   // Use sum of lengths of first and last names
   // as hash function.
-  size_t operator()(const Predicate& p) const
+  size_t operator()(const Predicate & p) const
   {
     return hasher(p.name) + p.parameters.size();
   }
@@ -91,33 +92,33 @@ class Or : public plansys2_msgs::msg::Tree
 {
 public:
   Or()
-      : plansys2_msgs::msg::Tree() {}
+  : plansys2_msgs::msg::Tree() {}
   explicit Or(const std::string & or_condition)
-      : plansys2_msgs::msg::Tree(parser::pddl::fromString(or_condition)) {}
+  : plansys2_msgs::msg::Tree(parser::pddl::fromString(or_condition)) {}
   Or(const plansys2_msgs::msg::Tree & or_condition)  // NOLINT(runtime/explicit)
-      : plansys2_msgs::msg::Tree(or_condition) {}
+  : plansys2_msgs::msg::Tree(or_condition) {}
 };
 
 class OneOf : public plansys2_msgs::msg::Tree
 {
 public:
   OneOf()
-      : plansys2_msgs::msg::Tree() {}
+  : plansys2_msgs::msg::Tree() {}
   explicit OneOf(const std::string & condition)
-      : plansys2_msgs::msg::Tree(parser::pddl::fromString(condition)) {}
+  : plansys2_msgs::msg::Tree(parser::pddl::fromString(condition)) {}
   OneOf(const plansys2_msgs::msg::Tree & condition)  // NOLINT(runtime/explicit)
-      : plansys2_msgs::msg::Tree(condition) {}
+  : plansys2_msgs::msg::Tree(condition) {}
 };
 
 class Unknown : public plansys2_msgs::msg::Tree
 {
 public:
   Unknown()
-      : plansys2_msgs::msg::Tree() {}
+  : plansys2_msgs::msg::Tree() {}
   explicit Unknown(const std::string & condition)
-      : plansys2_msgs::msg::Tree(parser::pddl::fromString(condition)) {}
+  : plansys2_msgs::msg::Tree(parser::pddl::fromString(condition)) {}
   Unknown(const plansys2_msgs::msg::Tree & condition)  // NOLINT(runtime/explicit)
-      : plansys2_msgs::msg::Tree(condition) {}
+  : plansys2_msgs::msg::Tree(condition) {}
 };
 
 template<class toT, class fromT>

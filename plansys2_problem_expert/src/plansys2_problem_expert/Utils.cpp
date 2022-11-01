@@ -59,46 +59,48 @@ std::tuple<bool, bool, double> evaluate(
       }
 
     case plansys2_msgs::msg::Node::FOR_ALL: {
-      // TODO this only handles a single predicate and a single parameter
-      bool success = true;
-      bool truth_value = true;
-      auto all_instances = problem_client->getInstances();
-      auto params = tree.nodes[node_id].parameters;
-      std::unordered_map<std::string, std::vector<std::string>> instance_map;
-      if (params.size() > 1){
-        std::cerr << "for all does not currently support multiple parameters" << std::endl;
-        return std::make_tuple(false, false, 0);
-      }
-      for (auto & instance : all_instances) {
-        instance_map[instance.type].push_back(instance.name);
-      }
+        // TODO this only handles a single predicate and a single parameter
+        bool success = true;
+        bool truth_value = true;
+        auto all_instances = problem_client->getInstances();
+        auto params = tree.nodes[node_id].parameters;
+        std::unordered_map<std::string, std::vector<std::string>> instance_map;
+        if (params.size() > 1) {
+          std::cerr << "for all does not currently support multiple parameters" << std::endl;
+          return std::make_tuple(false, false, 0);
+        }
+        for (auto & instance : all_instances) {
+          instance_map[instance.type].push_back(instance.name);
+        }
 
-      std::vector<plansys2_msgs::msg::Tree> for_all_predicates;
-      auto child_ind = tree.nodes[node_id].children[0];
-      auto universal_pred_name = tree.nodes[child_ind].name;
-      for (const auto& instance_name : instance_map[params[0].type]){
+        std::vector<plansys2_msgs::msg::Tree> for_all_predicates;
+        auto child_ind = tree.nodes[node_id].children[0];
+        auto universal_pred_name = tree.nodes[child_ind].name;
+        for (const auto & instance_name : instance_map[params[0].type]) {
           plansys2_msgs::msg::Tree tree_pred = tree;
           auto ind = child_ind;
-          while (tree_pred.nodes[ind].node_type != plansys2_msgs::msg::Node::PREDICATE){
+          while (tree_pred.nodes[ind].node_type != plansys2_msgs::msg::Node::PREDICATE) {
             ind = tree_pred.nodes[ind].children[0];
           }
-          for (auto& param : tree_pred.nodes[ind].parameters){
-            if (param.type == params[0].type){
+          for (auto & param : tree_pred.nodes[ind].parameters) {
+            if (param.type == params[0].type) {
               param.name = instance_name;
             }
           }
           for_all_predicates.push_back(tree_pred);
-      }
+        }
 
-      for (const auto& tree_pred : for_all_predicates){
-        std::tuple<bool, bool, double> result =
-            evaluate(tree_pred, problem_client, predicates, functions, apply, use_state, child_ind, negate);
-        success = success && std::get<0>(result);
-        truth_value = truth_value && std::get<1>(result);
-      }
+        for (const auto & tree_pred : for_all_predicates) {
+          std::tuple<bool, bool, double> result =
+            evaluate(
+            tree_pred, problem_client, predicates, functions, apply, use_state, child_ind,
+            negate);
+          success = success && std::get<0>(result);
+          truth_value = truth_value && std::get<1>(result);
+        }
 
-      return std::make_tuple(success, truth_value, 0);
-    }
+        return std::make_tuple(success, truth_value, 0);
+      }
 
     case plansys2_msgs::msg::Node::OR: {
         bool success = true;
