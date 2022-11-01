@@ -150,8 +150,7 @@ public:
         } else if (s == "disjunctive-preconditions") {
           disj = true;
         } else if (s == "derived-predicates") {derivedpred = true;} else {
-          return false;                                                                 // Unknown requirement
-
+          return false; // Unknown requirement
         }
         return true;
       }

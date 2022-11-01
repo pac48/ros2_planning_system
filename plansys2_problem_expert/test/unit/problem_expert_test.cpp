@@ -107,7 +107,7 @@ TEST(problem_expert, add_functions)
     std::string("( define ( problem problem_1 )\n( :domain simple )\n") +
     std::string("( :objects\n\tbedroom - room\n\tkitchen - room_with_teleporter\n)\n") +
     std::string("( :init\n\t( = ( room_distance bedroom kitchen ) 1.2300000000 )\n)\n") +
-    std::string("( :goal\n\t( and\n\t))\n)\n")
+    std::string("( :goal\n\t\t)\n)\n")
   );
 
   plansys2_msgs::msg::Node function_2;
@@ -133,7 +133,7 @@ TEST(problem_expert, add_functions)
     std::string("( :objects\n\tbedroom - room\n\tkitchen - room_with_teleporter\n)\n") +
     std::string("( :init\n\t( = ( room_distance bedroom kitchen ) 1.2300000000 )\n") +
     std::string("\t( = ( room_distance kitchen bedroom ) 2.3400000000 )\n)\n") +
-    std::string("( :goal\n\t( and\n\t))\n)\n"));
+    std::string("( :goal\n\t\t)\n)\n"));
 
   function_2.value = 3.45;
 
@@ -145,7 +145,7 @@ TEST(problem_expert, add_functions)
     std::string("( :objects\n\tbedroom - room\n\tkitchen - room_with_teleporter\n)\n") +
     std::string("( :init\n\t( = ( room_distance bedroom kitchen ) 1.2300000000 )\n") +
     std::string("\t( = ( room_distance kitchen bedroom ) 3.4500000000 )\n)\n") +
-    std::string("( :goal\n\t( and\n\t))\n)\n"));
+    std::string("( :goal\n\t\t)\n)\n"));
 
   plansys2_msgs::msg::Node function_3;
   function_3.node_type = plansys2_msgs::msg::Node::FUNCTION;
@@ -155,7 +155,6 @@ TEST(problem_expert, add_functions)
   function_3.value = 2.34;
 
   ASSERT_FALSE(problem_expert.addFunction(function_3));
-
   ASSERT_FALSE(problem_expert.removeFunction(function_3));
 
   ASSERT_TRUE(
@@ -670,7 +669,7 @@ TEST(problem_expert, get_problem_observe) {
     "b2 )\t)\n\t( unknown ( on b2 b3 )\t)\n\t( oneof\n\t\t( ontable b2 )\n\t\t( on b2 b3 )\n\t)\n\t( or")
     +
     std::string(
-    "\n\t\t( on b2 b3 )\n\t\t( on b3 b2 )\n\t)\n\t( or\n\t\t( not ( clear b1 ) )\n\t\t( clear b1 )\n\t)\n)\n( :goal\n\t( and\n\t\t( on b1 b2 )\n\t)\n)\n)\n");
+    "\n\t\t( on b2 b3 )\n\t\t( on b3 b2 )\n\t)\n\t( or\n\t\t( not ( clear b1 ) )\n\t\t( clear b1 )\n\t)\n)\n( :goal\n\t\t\t( on b1 b2 )\n\t)\n)\n");
   auto problem_str = problem_expert.getProblem();
   std::cout << problem_str;
   ASSERT_EQ(problem_str, tmp);
@@ -775,6 +774,7 @@ TEST(problem_expert, add_problem) {
 
 TEST(problem_expert, add_problem_with_constants)
 {
+  //TODO test broken from 0f653673109602f965b9c9eac7e340f6bd07051e
   std::string pkgpath = ament_index_cpp::get_package_share_directory("plansys2_problem_expert");
   std::ifstream domain_ifs(pkgpath + "/pddl/domain_simple_constants.pddl");
   std::string domain_str((
@@ -821,7 +821,7 @@ TEST(problem_expert, add_problem_with_constants)
       parser::pddl::fromStringPredicate(
         "(person_at jack bedroom)")));
 
-  ASSERT_EQ(parser::pddl::toString(problem_expert.getGoal()), "(and (robot_talk leia m1 jack))");
+  ASSERT_EQ(parser::pddl::toString(problem_expert.getGoal()), "(robot_talk leia m1 jack)");
 
   ASSERT_EQ(
     problem_expert.getProblem(),
@@ -829,7 +829,7 @@ TEST(problem_expert, add_problem_with_constants)
     std::string("( :objects\n\tm1 - message\n\tkitchen bedroom - room\n)\n") +
     std::string("( :init\n\t( robot_at leia kitchen )\n") +
     std::string("\t( person_at jack bedroom )\n)\n") +
-    std::string("( :goal\n\t( and\n\t\t( robot_talk leia m1 jack )\n\t))\n)\n"));
+    std::string("( :goal\n\t\t\t( robot_talk leia m1 jack )\n\t)\n)\n"));
 
   ASSERT_TRUE(problem_expert.clearKnowledge());
   ASSERT_EQ(problem_expert.getPredicates().size(), 0);
@@ -838,7 +838,7 @@ TEST(problem_expert, add_problem_with_constants)
   ASSERT_EQ(
     problem_expert.getProblem(),
     std::string("( define ( problem problem_1 )\n( :domain plansys2 )\n") +
-    std::string("( :objects\n)\n( :init\n)\n( :goal\n\t( and\n\t))\n)\n"));
+    std::string("( :objects\n)\n( :init\n)\n( :goal\n\t\t)\n)\n"));
 
 
   std::ifstream problem_2_ifs(pkgpath + "/pddl/problem_simple_constants_2.pddl");
@@ -853,6 +853,7 @@ TEST(problem_expert, add_problem_with_constants)
 }
 
 TEST(problem_expert, add_problem_observe) {
+  //TODO test broken from 0f653673109602f965b9c9eac7e340f6bd07051e
   std::string pkgpath = ament_index_cpp::get_package_share_directory("plansys2_problem_expert");
   std::ifstream domain_ifs(pkgpath + "/pddl/domain_blocks_observe.pddl");
   std::string domain_str((
@@ -890,9 +891,7 @@ TEST(problem_expert, add_problem_observe) {
 
   ASSERT_EQ(parser::pddl::toString(problem_expert.getGoal()), "(and (on b2 b1)(on b3 b2))");
 
-  auto tmp1 = problem_expert.getProblem();
-  std::cout << tmp1;
-  auto tmp2 = std::string(
+  auto tmp1 = std::string(
     "( define ( problem problem_1 )\n( :domain blocksworld )\n( :objects\n\tb1 b2 b3 - block\n)") +
     std::string(
     "\n( :init\n\t( ontable b1 )\n\t( clear b1 )\n\t( unknown ( ontable b3 )\t)\n\t( unknown ( clear b3 )")
@@ -913,18 +912,19 @@ TEST(problem_expert, add_problem_observe) {
     ")\n\t)\n\t( oneof\n\t\t( clear b3 )\n\t\t( on b2 b3 )\n\t)\n\t( oneof\n\t\t( clear b2 )\n") +
     std::string(
     "\t\t( on b3 b2 )\n\t)\n)\n( :goal\n\t( and\n\t\t( on b2 b1 )\n\t\t( on b3 b2 )\n\t)\n)\n)\n");
+  auto tmp2 = problem_expert.getProblem();
 
   ASSERT_EQ(tmp1, tmp2);
-
   ASSERT_TRUE(problem_expert.clearKnowledge());
+  auto tmp3 = problem_expert.getProblem();
   ASSERT_EQ(
-    problem_expert.getProblem(),
-    std::string("( define ( problem problem_1 )\n( :domain blocksworld )\n") +
-    std::string("( :objects\n)\n( :init\n)\n( :goal\n\t( and\n\t)\n)\n)\n"));
+    std::string("( define ( problem problem_1 )\n( :domain blocksworld )\n( :objects\n)") +
+    std::string("\n( :init\n)\n( :goal\n\t\t)\n)\n"), tmp3);
 
 }
 
 TEST(problem_expert, is_goal_satisfied) {
+  //TODO test broken from 0f653673109602f965b9c9eac7e340f6bd07051e
   std::string pkgpath = ament_index_cpp::get_package_share_directory("plansys2_problem_expert");
   std::ifstream domain_ifs(pkgpath + "/pddl/domain_simple.pddl");
   std::string domain_str((

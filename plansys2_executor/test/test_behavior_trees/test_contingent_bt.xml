@@ -1,71 +1,73 @@
 <root main_tree_to_execute="MainTree">
   <BehaviorTree ID="MainTree">
-    <Fallback>
-      <Sequence>
-        <Sequence name="(senseon b2 b3):0">
-          <WaitAtStartReq action="(senseon b2 b3):0"/>
-          <ReactiveSequence name="(senseon b2 b3):0">
-            <CheckOverAllReq action="(senseon b2 b3):0"/>
-            <ExecuteAction action="(senseon b2 b3):0"/>
-          </ReactiveSequence>
-          <ApplyObservation observe="(on b2 b3)" value="true"/>
+    <Sequence name="root_sequence">
+      <Fallback>
+        <Sequence>
+          <Sequence name="(senseon b2 b3):0">
+            <WaitAtStartReq action="(senseon b2 b3):0"/>
+            <ReactiveSequence name="(senseon b2 b3):0">
+              <CheckOverAllReq action="(senseon b2 b3):0"/>
+              <ExecuteAction action="(senseon b2 b3):0"/>
+            </ReactiveSequence>
+            <ApplyObservation observe="(on b2 b3)" value="true"/>
+          </Sequence>
+          <Sequence name="(move_b_to_b b2 b3 b1):1000">
+            <WaitAtStartReq action="(move_b_to_b b2 b3 b1):1000"/>
+            <ApplyAtStartEffect action="(move_b_to_b b2 b3 b1):1000"/>
+            <ReactiveSequence name="(move_b_to_b b2 b3 b1):1000">
+              <CheckOverAllReq action="(move_b_to_b b2 b3 b1):1000"/>
+              <ExecuteAction action="(move_b_to_b b2 b3 b1):1000"/>
+            </ReactiveSequence>
+            <CheckAtEndReq action="(move_b_to_b b2 b3 b1):1000"/>
+            <ApplyAtEndEffect action="(move_b_to_b b2 b3 b1):1000"/>
+          </Sequence>
+          <Sequence name="(move_t_to_b b3 b2):2000">
+            <WaitAtStartReq action="(move_t_to_b b3 b2):2000"/>
+            <ApplyAtStartEffect action="(move_t_to_b b3 b2):2000"/>
+            <ReactiveSequence name="(move_t_to_b b3 b2):2000">
+              <CheckOverAllReq action="(move_t_to_b b3 b2):2000"/>
+              <ExecuteAction action="(move_t_to_b b3 b2):2000"/>
+            </ReactiveSequence>
+            <CheckAtEndReq action="(move_t_to_b b3 b2):2000"/>
+            <ApplyAtEndEffect action="(move_t_to_b b3 b2):2000"/>
+          </Sequence>
         </Sequence>
-        <Sequence name="(move-b-to-b b2 b3 b1):1000">
-          <WaitAtStartReq action="(move-b-to-b b2 b3 b1):1000"/>
-          <ApplyAtStartEffect action="(move-b-to-b b2 b3 b1):1000"/>
-          <ReactiveSequence name="(move-b-to-b b2 b3 b1):1000">
-            <CheckOverAllReq action="(move-b-to-b b2 b3 b1):1000"/>
-            <ExecuteAction action="(move-b-to-b b2 b3 b1):1000"/>
-          </ReactiveSequence>
-          <CheckAtEndReq action="(move-b-to-b b2 b3 b1):1000"/>
-          <ApplyAtEndEffect action="(move-b-to-b b2 b3 b1):1000"/>
+        <Sequence>
+          <Sequence name="(senseon b2 b3):0">
+            <ApplyObservation observe="(on b2 b3)" value="false"/>
+          </Sequence>
+          <Sequence name="(move_to_t b3 b2):1000">
+            <WaitAtStartReq action="(move_to_t b3 b2):1000"/>
+            <ApplyAtStartEffect action="(move_to_t b3 b2):1000"/>
+            <ReactiveSequence name="(move_to_t b3 b2):1000">
+              <CheckOverAllReq action="(move_to_t b3 b2):1000"/>
+              <ExecuteAction action="(move_to_t b3 b2):1000"/>
+            </ReactiveSequence>
+            <CheckAtEndReq action="(move_to_t b3 b2):1000"/>
+            <ApplyAtEndEffect action="(move_to_t b3 b2):1000"/>
+          </Sequence>
+          <Sequence name="(move_t_to_b b2 b1):2000">
+            <WaitAtStartReq action="(move_t_to_b b2 b1):2000"/>
+            <ApplyAtStartEffect action="(move_t_to_b b2 b1):2000"/>
+            <ReactiveSequence name="(move_t_to_b b2 b1):2000">
+              <CheckOverAllReq action="(move_t_to_b b2 b1):2000"/>
+              <ExecuteAction action="(move_t_to_b b2 b1):2000"/>
+            </ReactiveSequence>
+            <CheckAtEndReq action="(move_t_to_b b2 b1):2000"/>
+            <ApplyAtEndEffect action="(move_t_to_b b2 b1):2000"/>
+          </Sequence>
+          <Sequence name="(move_t_to_b b3 b2):3000">
+            <WaitAtStartReq action="(move_t_to_b b3 b2):3000"/>
+            <ApplyAtStartEffect action="(move_t_to_b b3 b2):3000"/>
+            <ReactiveSequence name="(move_t_to_b b3 b2):3000">
+              <CheckOverAllReq action="(move_t_to_b b3 b2):3000"/>
+              <ExecuteAction action="(move_t_to_b b3 b2):3000"/>
+            </ReactiveSequence>
+            <CheckAtEndReq action="(move_t_to_b b3 b2):3000"/>
+            <ApplyAtEndEffect action="(move_t_to_b b3 b2):3000"/>
+          </Sequence>
         </Sequence>
-        <Sequence name="(move-t-to-b b3 b2):2000">
-          <WaitAtStartReq action="(move-t-to-b b3 b2):2000"/>
-          <ApplyAtStartEffect action="(move-t-to-b b3 b2):2000"/>
-          <ReactiveSequence name="(move-t-to-b b3 b2):2000">
-            <CheckOverAllReq action="(move-t-to-b b3 b2):2000"/>
-            <ExecuteAction action="(move-t-to-b b3 b2):2000"/>
-          </ReactiveSequence>
-          <CheckAtEndReq action="(move-t-to-b b3 b2):2000"/>
-          <ApplyAtEndEffect action="(move-t-to-b b3 b2):2000"/>
-        </Sequence>
-      </Sequence>
-      <Sequence>
-        <Sequence name="(senseon b2 b3):0">
-          <ApplyObservation observe="(on b2 b3)" value="false"/>
-        </Sequence>
-        <Sequence name="(move-to-t b3 b2):1000">
-          <WaitAtStartReq action="(move-to-t b3 b2):1000"/>
-          <ApplyAtStartEffect action="(move-to-t b3 b2):1000"/>
-          <ReactiveSequence name="(move-to-t b3 b2):1000">
-            <CheckOverAllReq action="(move-to-t b3 b2):1000"/>
-            <ExecuteAction action="(move-to-t b3 b2):1000"/>
-          </ReactiveSequence>
-          <CheckAtEndReq action="(move-to-t b3 b2):1000"/>
-          <ApplyAtEndEffect action="(move-to-t b3 b2):1000"/>
-        </Sequence>
-        <Sequence name="(move-t-to-b b2 b1):2000">
-          <WaitAtStartReq action="(move-t-to-b b2 b1):2000"/>
-          <ApplyAtStartEffect action="(move-t-to-b b2 b1):2000"/>
-          <ReactiveSequence name="(move-t-to-b b2 b1):2000">
-            <CheckOverAllReq action="(move-t-to-b b2 b1):2000"/>
-            <ExecuteAction action="(move-t-to-b b2 b1):2000"/>
-          </ReactiveSequence>
-          <CheckAtEndReq action="(move-t-to-b b2 b1):2000"/>
-          <ApplyAtEndEffect action="(move-t-to-b b2 b1):2000"/>
-        </Sequence>
-        <Sequence name="(move-t-to-b b3 b2):3000">
-          <WaitAtStartReq action="(move-t-to-b b3 b2):3000"/>
-          <ApplyAtStartEffect action="(move-t-to-b b3 b2):3000"/>
-          <ReactiveSequence name="(move-t-to-b b3 b2):3000">
-            <CheckOverAllReq action="(move-t-to-b b3 b2):3000"/>
-            <ExecuteAction action="(move-t-to-b b3 b2):3000"/>
-          </ReactiveSequence>
-          <CheckAtEndReq action="(move-t-to-b b3 b2):3000"/>
-          <ApplyAtEndEffect action="(move-t-to-b b3 b2):3000"/>
-        </Sequence>
-      </Sequence>
-    </Fallback>
+      </Fallback>
+    </Sequence>
   </BehaviorTree>
 </root>

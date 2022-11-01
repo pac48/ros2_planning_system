@@ -38,7 +38,7 @@
 
 (:action move_all_blocks
   :parameters ()
-  :precondition ()
+  :precondition (and )
   :effect (and (forall (?b - block)
                			  (ontable ?b)
                 )

@@ -472,6 +472,7 @@ ProblemExpert::clearKnowledge()
   instances_.clear();
   predicates_.clear();
   functions_.clear();
+  conditionals_.clear();
   clearGoal();
 
   return true;
@@ -612,6 +613,11 @@ bool
 ProblemExpert::isValidGoal(const plansys2::Goal & goal)
 {
   return checkPredicateTreeTypes(goal, domain_expert_);
+}
+
+bool ProblemExpert::isValidCondition(const plansys2_msgs::msg::Tree & cond)
+{
+  return checkPredicateTreeTypes(cond, domain_expert_);
 }
 
 bool

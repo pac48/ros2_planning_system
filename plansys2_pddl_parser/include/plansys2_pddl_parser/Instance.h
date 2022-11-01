@@ -206,7 +206,7 @@ public:
         } else {
           throw UnknownToken(f.getToken());
         }
-        c->parse(f, objects_ts, d);
+        c->parse(f, ts, d);
         v.push_back(c);
       }
 
@@ -278,6 +278,52 @@ public:
         }
         Stringreader f(ss);
         parseGoal(f);
+      }
+
+      // add an unknown predicate to the initial state
+      void addInitUnknown(const std::string & name, const StringVec & v = StringVec())
+      {
+        auto unknown = new Unknown();
+        auto * tg = new TypeGround(d.preds.get(name));
+        tg->insert(d, v);
+        unknown->add(tg);
+        init_cond.push_back(unknown);
+      }
+
+      // add one of predicate to the initial state
+      void addInitOneOf(const std::vector<std::string> & name, const std::vector<StringVec> & v = {})
+      {
+        auto one_of = new Oneof();
+        for (int i = 0; i < name.size(); i++) {
+          auto * tg = new TypeGround(d.preds.get(name[i]));
+          tg->insert(d, v[i]);
+          one_of->add(tg);
+        }
+        init_cond.push_back(one_of);
+      }
+
+      // add an or predicate to the initial state
+      void addInitOr(
+          const std::pair<std::string, std::string> & names,
+          const std::pair<StringVec, StringVec> & vecs = {}, const std::pair<bool, bool> negates = {})
+      {
+        auto or_ = new Or();
+        auto * tg1 = new TypeGround(d.preds.get(names.first));
+        tg1->insert(d, vecs.first);
+        auto * tg2 = new TypeGround(d.preds.get(names.second));
+        tg2->insert(d, vecs.second);
+        Condition * cond1 = tg1;
+        if (negates.first) {
+          cond1 = new Not(tg1);
+        }
+        Condition * cond2 = tg2;
+        if (negates.second) {
+          cond2 = new Not(tg2);
+        }
+
+        or_->first = cond1;
+        or_->second = cond2;
+        init_cond.push_back(or_);
       }
 
       friend std::ostream & operator <<

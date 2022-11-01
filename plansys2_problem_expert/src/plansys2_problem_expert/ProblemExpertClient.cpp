@@ -136,7 +136,7 @@ ProblemExpertClient::getInstances()
 bool
 ProblemExpertClient::addInstance(const plansys2::Instance & instance)
 {
-  while (!add_problem_instance_client_->wait_for_service(std::chrono::seconds(50000))) {
+  while (!add_problem_instance_client_->wait_for_service(std::chrono::seconds(5))) {
     if (!rclcpp::ok()) {
       return false;
     }
@@ -151,7 +151,7 @@ ProblemExpertClient::addInstance(const plansys2::Instance & instance)
 
   auto future_result = add_problem_instance_client_->async_send_request(request);
 
-  if (rclcpp::spin_until_future_complete(node_, future_result, std::chrono::seconds(100000000)) !=
+  if (rclcpp::spin_until_future_complete(node_, future_result, std::chrono::seconds(1)) !=
     rclcpp::FutureReturnCode::SUCCESS)
   {
     return false;
@@ -322,7 +322,7 @@ std::vector<plansys2_msgs::msg::Tree> ProblemExpertClient::getConditionals()
 bool
 ProblemExpertClient::addPredicate(const plansys2::Predicate & predicate)
 {
-  while (!add_problem_predicate_client_->wait_for_service(std::chrono::seconds(50000))) {
+  while (!add_problem_predicate_client_->wait_for_service(std::chrono::seconds(5))) {
     if (!rclcpp::ok()) {
       return false;
     }
@@ -337,7 +337,7 @@ ProblemExpertClient::addPredicate(const plansys2::Predicate & predicate)
 
   auto future_result = add_problem_predicate_client_->async_send_request(request);
 
-  if (rclcpp::spin_until_future_complete(node_, future_result, std::chrono::seconds(10000000)) !=
+  if (rclcpp::spin_until_future_complete(node_, future_result, std::chrono::seconds(1)) !=
     rclcpp::FutureReturnCode::SUCCESS)
   {
     return false;
@@ -374,8 +374,7 @@ bool ProblemExpertClient::addConditional(const plansys2_msgs::msg::Tree & condit
   request->tree = condition;
 
   auto future_result = add_problem_conditional_client_->async_send_request(request);
-  // TODO change back to 1
-  if (rclcpp::spin_until_future_complete(node_, future_result, std::chrono::seconds(10000000)) !=
+  if (rclcpp::spin_until_future_complete(node_, future_result, std::chrono::seconds(1)) !=
     rclcpp::FutureReturnCode::SUCCESS)
   {
     return false;
