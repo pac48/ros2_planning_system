@@ -28,13 +28,10 @@ plansys2_msgs::msg::Node::SharedPtr Or::getTree( plansys2_msgs::msg::Tree & tree
   node->node_id = tree.nodes.size();
   tree.nodes.push_back(*node);
 
-  plansys2_msgs::msg::Node::SharedPtr child1 = first->getTree(tree, d, replace);
-  node->children.push_back(child1->node_id);
-
-  plansys2_msgs::msg::Node::SharedPtr child2 = second->getTree(tree, d, replace);
-  node->children.push_back(child2->node_id);
-
-  tree.nodes[node->node_id] = *node;
+  plansys2_msgs::msg::Node::SharedPtr child_f = first->getTree(tree, d, replace);
+  tree.nodes[node->node_id].children.push_back(child_f->node_id);
+  plansys2_msgs::msg::Node::SharedPtr child_s = second->getTree(tree, d, replace);
+  tree.nodes[node->node_id].children.push_back(child_s->node_id);
 
   return node;
 }
