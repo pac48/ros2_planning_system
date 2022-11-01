@@ -17,7 +17,6 @@
 
 #include "plansys2_core/Utils.hpp"
 
-
 namespace plansys2
 {
 

@@ -54,23 +54,23 @@ set(dependencies
 include_directories(include ${ZMQ_INCLUDE_DIRS})
 
 set(EXECUTOR_SOURCES
-        src/plansys2_executor/ActionExecutor.cpp
-        src/plansys2_executor/ActionExecutorClient.cpp
-        src/plansys2_executor/ComputeBT.cpp
-        src/plansys2_executor/ExecutorClient.cpp
-        src/plansys2_executor/ExecutorNode.cpp
-        src/plansys2_executor/ExecutorNodeBase.cpp
-        src/plansys2_executor/ExecutorNodeContingent.cpp
-        src/plansys2_executor/behavior_tree/apply_atend_effect_node.cpp
-        src/plansys2_executor/behavior_tree/apply_atstart_effect_node.cpp
-        src/plansys2_executor/behavior_tree/apply_observation_node.cpp
-        src/plansys2_executor/behavior_tree/check_action_node.cpp
-        src/plansys2_executor/behavior_tree/check_atend_req_node.cpp
-        src/plansys2_executor/behavior_tree/check_overall_req_node.cpp
-        src/plansys2_executor/behavior_tree/check_timeout_node.cpp
-        src/plansys2_executor/behavior_tree/execute_action_node.cpp
-        src/plansys2_executor/behavior_tree/wait_action_node.cpp
-        src/plansys2_executor/behavior_tree/wait_atstart_req_node.cpp
+  src/plansys2_executor/ActionExecutor.cpp
+  src/plansys2_executor/ActionExecutorClient.cpp
+  src/plansys2_executor/ComputeBT.cpp
+  src/plansys2_executor/ExecutorClient.cpp
+  src/plansys2_executor/ExecutorNode.cpp
+  src/plansys2_executor/ExecutorNodeBase.cpp
+  src/plansys2_executor/ExecutorNodeContingent.cpp
+  src/plansys2_executor/behavior_tree/apply_atend_effect_node.cpp
+  src/plansys2_executor/behavior_tree/apply_atstart_effect_node.cpp
+  src/plansys2_executor/behavior_tree/apply_observation_node.cpp
+  src/plansys2_executor/behavior_tree/check_action_node.cpp
+  src/plansys2_executor/behavior_tree/check_atend_req_node.cpp
+  src/plansys2_executor/behavior_tree/check_overall_req_node.cpp
+  src/plansys2_executor/behavior_tree/check_timeout_node.cpp
+  src/plansys2_executor/behavior_tree/execute_action_node.cpp
+  src/plansys2_executor/behavior_tree/wait_action_node.cpp
+  src/plansys2_executor/behavior_tree/wait_atstart_req_node.cpp
 )
 
 

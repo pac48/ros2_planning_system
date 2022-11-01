@@ -58,7 +58,8 @@
 #include "gtest/gtest.h"
 
 
-TEST(problem_expert, wait_overall_req_test) {
+TEST(problem_expert, wait_overall_req_test)
+{
   auto test_node = rclcpp::Node::make_shared("test_node");
   auto test_lc_node = rclcpp_lifecycle::LifecycleNode::make_shared("test_lc_node");
   auto domain_node = std::make_shared<plansys2::DomainExpertNode>();
@@ -154,7 +155,7 @@ TEST(problem_expert, wait_overall_req_test) {
     status = tree.tickRoot();
     ASSERT_EQ(status, BT::NodeStatus::FAILURE);
 
-    for (const auto & pred: predicates) {
+    for (const auto & pred : predicates) {
       ASSERT_TRUE(problem_client->addPredicate(plansys2::Predicate(pred)));
     }
 
@@ -171,7 +172,8 @@ TEST(problem_expert, wait_overall_req_test) {
   t.join();
 }
 
-TEST(problem_expert, wait_atstart_req_test) {
+TEST(problem_expert, wait_atstart_req_test)
+{
   auto test_node = rclcpp::Node::make_shared("test_node");
   auto test_lc_node = rclcpp_lifecycle::LifecycleNode::make_shared("test_lc_node");
   auto domain_node = std::make_shared<plansys2::DomainExpertNode>();
@@ -272,7 +274,7 @@ TEST(problem_expert, wait_atstart_req_test) {
     ASSERT_EQ(status, BT::NodeStatus::RUNNING);
 
 
-    for (const auto & pred: predicates) {
+    for (const auto & pred : predicates) {
       ASSERT_TRUE(problem_client->addPredicate(plansys2::Predicate(pred)));
     }
 
@@ -286,7 +288,8 @@ TEST(problem_expert, wait_atstart_req_test) {
   t.join();
 }
 
-TEST(problem_expert, wait_atend_req_test) {
+TEST(problem_expert, wait_atend_req_test)
+{
   auto test_node = rclcpp::Node::make_shared("test_node");
   auto test_lc_node = rclcpp_lifecycle::LifecycleNode::make_shared("test_lc_node");
   auto domain_node = std::make_shared<plansys2::DomainExpertNode>();
@@ -382,7 +385,7 @@ TEST(problem_expert, wait_atend_req_test) {
     status = tree.tickRoot();
     ASSERT_EQ(status, BT::NodeStatus::FAILURE);
 
-    for (const auto & pred: predicates) {
+    for (const auto & pred : predicates) {
       ASSERT_TRUE(problem_client->addPredicate(plansys2::Predicate(pred)));
     }
 
@@ -399,7 +402,8 @@ TEST(problem_expert, wait_atend_req_test) {
   t.join();
 }
 
-TEST(problem_expert, at_start_effect_test) {
+TEST(problem_expert, at_start_effect_test)
+{
   auto test_node = rclcpp::Node::make_shared("test_node");
   auto test_lc_node = rclcpp_lifecycle::LifecycleNode::make_shared("test_lc_node");
   auto domain_node = std::make_shared<plansys2::DomainExpertNode>();
@@ -489,7 +493,7 @@ TEST(problem_expert, at_start_effect_test) {
       "(robot_available robot1)",
       "(robot_at robot1 wheels_zone)"};
 
-    for (const auto & pred: predicates) {
+    for (const auto & pred : predicates) {
       ASSERT_TRUE(problem_client->addPredicate(plansys2::Predicate(pred)));
     }
     auto tree = factory.createTreeFromText(bt_xml_tree, blackboard);
@@ -517,7 +521,8 @@ TEST(problem_expert, at_start_effect_test) {
   t.join();
 }
 
-TEST(problem_expert, at_end_effect_test) {
+TEST(problem_expert, at_end_effect_test)
+{
   auto test_node = rclcpp::Node::make_shared("test_node");
   auto test_lc_node = rclcpp_lifecycle::LifecycleNode::make_shared("test_lc_node");
   auto domain_node = std::make_shared<plansys2::DomainExpertNode>();
@@ -606,7 +611,7 @@ TEST(problem_expert, at_end_effect_test) {
     std::vector<std::string> predicates = {
       "(robot_at robot1 wheels_zone)"};
 
-    for (const auto & pred: predicates) {
+    for (const auto & pred : predicates) {
       ASSERT_TRUE(problem_client->addPredicate(plansys2::Predicate(pred)));
     }
     auto tree = factory.createTreeFromText(bt_xml_tree, blackboard);
@@ -635,7 +640,8 @@ TEST(problem_expert, at_end_effect_test) {
   t.join();
 }
 
-TEST(problem_expert, check_observation_test) {
+TEST(problem_expert, check_observation_test)
+{
   auto test_node = rclcpp::Node::make_shared("test_node");
   auto test_lc_node = rclcpp_lifecycle::LifecycleNode::make_shared("test_lc_node");
   auto domain_node = std::make_shared<plansys2::DomainExpertNode>();

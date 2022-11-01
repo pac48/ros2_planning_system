@@ -49,7 +49,7 @@ SimpleBTBuilder::initialize(
   } else {
     bt_action_ =
       R""""(<Sequence name="ACTION_ID">
-  <WaitAtStartReq  action="ACTION_ID"/>
+WAIT_PREV_ACTIONS
   <ApplyAtStartEffect action="ACTION_ID"/>
   <ReactiveSequence name="ACTION_ID">
     <CheckOverAllReq action="ACTION_ID"/>

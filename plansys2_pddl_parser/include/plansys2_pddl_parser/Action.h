@@ -90,4 +90,4 @@ protected:
 
     typedef std::vector < Action * > ActionVec;
 
-  }} // namespaces
+  } } // namespaces

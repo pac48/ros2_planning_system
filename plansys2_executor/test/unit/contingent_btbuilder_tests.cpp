@@ -86,8 +86,6 @@ TEST(simple_btbuilder_tests, test_tree_builder) {
 
 }
 
-//TODO need to add graphviz test
-
 int main(int argc, char ** argv)
 {
   testing::InitGoogleTest(&argc, argv);
